@@ -18,11 +18,16 @@ class EventsController < ApplicationController
     if @event.save
       redirect_to events_path, notice: "Event created."
     else
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Destination is the fixed events_path; only the flash alert text is
+      # dynamic (validation error messages), not the redirect target.
       redirect_to events_path, alert: @event.errors.full_messages.to_sentence
     end
   end
 
   def destroy
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant, the app's tenant-isolation boundary.
     Current.tenant.events.find(params[:id]).destroy
     redirect_to events_path, notice: "Event removed."
   end
