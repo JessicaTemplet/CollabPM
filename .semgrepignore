@@ -1,0 +1,5 @@
+# RSpec's `redirect_to` is a response matcher (expect(response).to redirect_to(...)),
+# not a call to ActionController's redirect_to. Semgrep's redirect/XSS rules match on
+# the method name alone and can't tell the difference, so specs get flagged for
+# assertions, not actual redirects. Excluding spec/ from that class of rule.
+spec/**
