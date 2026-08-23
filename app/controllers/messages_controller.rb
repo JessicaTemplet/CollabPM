@@ -13,6 +13,9 @@ class MessagesController < ApplicationController
     if @message.save
       redirect_to messages_path, notice: "Posted."
     else
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Destination is the fixed messages_path; only the alert text is
+      # dynamic (validation error messages).
       redirect_to messages_path, alert: @message.errors.full_messages.to_sentence
     end
   end
