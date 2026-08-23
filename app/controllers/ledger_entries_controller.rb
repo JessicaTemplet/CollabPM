@@ -13,6 +13,9 @@ class LedgerEntriesController < ApplicationController
     if @entry.save
       redirect_to ledger_entries_path, notice: "Entry recorded."
     else
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Destination is the fixed ledger_entries_path; only the alert text
+      # is dynamic (validation error messages).
       redirect_to ledger_entries_path, alert: @entry.errors.full_messages.to_sentence
     end
   end
