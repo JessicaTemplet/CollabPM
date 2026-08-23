@@ -12,6 +12,9 @@ module Invites
 
     def create
       payload = Invite.decode_token(params[:token])
+      # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+      # Scoped to Current.tenant, then re-verified against invite.tenant_id
+      # below — the token's embedded tenant_id is a hint, never authoritative.
       invite = Current.tenant.invites.find(payload["invite_id"])
       next_generation = payload["generation"].to_i + 1
 
