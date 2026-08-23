@@ -6,6 +6,8 @@ class ProposalsController < ApplicationController
   end
 
   def show
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant, the app's tenant-isolation boundary.
     @proposal = Current.tenant.proposals.find(params[:id])
   end
 
@@ -18,6 +20,9 @@ class ProposalsController < ApplicationController
     @proposal.created_by = Current.user
 
     if @proposal.save
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Redirects to the created record itself (proposal_path(@proposal)),
+      # not to a user-supplied URL.
       redirect_to @proposal, notice: "Proposal created."
     else
       render :new, status: :unprocessable_entity
@@ -25,13 +30,19 @@ class ProposalsController < ApplicationController
   end
 
   def edit
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant — see show above.
     @proposal = Current.tenant.proposals.find(params[:id])
   end
 
   def update
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant — see show above.
     @proposal = Current.tenant.proposals.find(params[:id])
 
     if @proposal.update(proposal_params)
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Redirects to the record itself, not a user-supplied URL.
       redirect_to @proposal, notice: "Proposal updated."
     else
       render :edit, status: :unprocessable_entity
