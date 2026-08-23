@@ -3,7 +3,17 @@ module Webhooks
   # arrive with no session cookie and no tenant subdomain, so tenant
   # resolution and authentication (both required by ApplicationController)
   # don't apply here and would just 401/404 every request.
+  #
+  # nosemgrep: ruby.lang.security.missing-csrf-protection.missing-csrf-protection
+  # CSRF doesn't apply to server-to-server webhooks (no session cookie to
+  # forge); HMAC signature verification below is the actual protection.
   class LemonSqueezyController < ActionController::Base
+    # nosemgrep: ruby.rails.security.audit.rails-skip-forgery-protection.rails-skip-forgery-protection
+    # Deliberate: LemonSqueezy can't send a Rails CSRF token on a webhook
+    # call. verify_signature! (HMAC-SHA256 over the raw body, checked
+    # before this action runs) is the substitute protection. This rule
+    # stays enabled everywhere else — any *other* controller adding
+    # skip_forgery_protection should still get flagged for review.
     skip_forgery_protection
 
     # Raw body is needed for HMAC verification, so read it before any
