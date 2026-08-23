@@ -1,0 +1,24 @@
+<h1>Invite someone</h1>
+
+<%= form_with model: @invite, url: invites_path do |f| %>
+  <% if @invite.errors.any? %>
+    <ul>
+      <% @invite.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= f.label :role %>
+  <%= f.select :role, Invite::GRANTABLE_ROLES %>
+
+  <%= f.label :generation_limit, "Forward limit" %>
+  <%= f.number_field :generation_limit, value: @invite.generation_limit, min: 1 %>
+
+  <%= f.label :expires_at, "Expires" %>
+  <%= f.datetime_field :expires_at %>
+
+  <%= f.submit "Create invite link" %>
+<% end %>
+
+<%= link_to "Back to invites", invites_path %>

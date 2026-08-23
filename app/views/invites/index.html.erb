@@ -1,0 +1,38 @@
+<h1>Invites</h1>
+
+<p><%= link_to "New invite", new_invite_path %></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Forwards</th>
+      <th>Expires</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @invites.each do |invite| %>
+      <tr>
+        <td><%= invite.role %></td>
+        <td>
+          <% if invite.used_at %>
+            redeemed <%= time_ago_in_words(invite.used_at) %> ago
+          <% elsif invite.expired? %>
+            expired
+          <% else %>
+            active
+          <% end %>
+        </td>
+        <td><%= invite.forward_log.size %> / <%= invite.generation_limit %></td>
+        <td><%= invite.expires_at.strftime("%b %-d, %Y %H:%M") %></td>
+        <td>
+          <% if invite.usable_at_generation?(0) %>
+            <%= link_to "Copy link", new_registration_url(invite_token: invite.token) %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

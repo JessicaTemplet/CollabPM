@@ -1,0 +1,25 @@
+<h1>Proposals</h1>
+
+<p>
+  <%= link_to "New proposal", new_proposal_path %>
+  |
+  <%= link_to "All", proposals_path %>
+  <%= link_to "My items", proposals_path(mine: 1) %>
+</p>
+
+<div style="display: flex; gap: 1rem;">
+  <% Proposal::STATUSES.each do |status| %>
+    <div style="flex: 1; min-width: 0;">
+      <h2><%= status.titleize %></h2>
+      <% @proposals_by_status[status].each do |proposal| %>
+        <div style="border: 1px solid #ccc; padding: 0.5rem; margin-bottom: 0.5rem;">
+          <%= link_to proposal.title, proposal %><br>
+          <small>
+            <%= proposal.assignee&.email_address || "Unassigned" %>
+            <% if proposal.due_date %> &middot; due <%= proposal.due_date.strftime("%b %-d") %><% end %>
+          </small>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,24 @@
+<h1>Project info</h1>
+
+<% ProjectInfoItem::KINDS.each do |kind| %>
+  <h2><%= kind.titleize %></h2>
+  <ul>
+    <% @items_by_kind[kind].each do |item| %>
+      <li>
+        <%= item.name %>
+        <%= button_to "Remove", project_info_item_path(item), method: :delete, form: { style: "display:inline" } %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Add item</h2>
+<%= form_with model: ProjectInfoItem.new, url: project_info_items_path do |f| %>
+  <%= f.label :kind %>
+  <%= f.select :kind, ProjectInfoItem::KINDS %>
+
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+
+  <%= f.submit "Add" %>
+<% end %>

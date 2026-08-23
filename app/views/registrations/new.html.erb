@@ -1,0 +1,16 @@
+<h1>Create your account</h1>
+
+<%= form_with model: @user, url: registration_path do |f| %>
+  <%= hidden_field_tag :invite_token, params[:invite_token] %>
+
+  <%= f.label :email_address %>
+  <%= f.email_field :email_address, autofocus: true %>
+
+  <%= f.label :password %>
+  <%= f.password_field :password %>
+
+  <%= f.label :password_confirmation %>
+  <%= f.password_field :password_confirmation %>
+
+  <%= f.submit "Sign up" %>
+<% end %>

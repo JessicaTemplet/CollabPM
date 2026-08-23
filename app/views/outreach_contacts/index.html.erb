@@ -1,0 +1,41 @@
+<h1>Outreach</h1>
+
+<table>
+  <thead>
+    <tr><th>Name</th><th>Channel</th><th>Kind</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <% @contacts.each do |contact| %>
+      <tr>
+        <td><%= contact.name %></td>
+        <td><%= contact.channel %></td>
+        <td><%= contact.kind.titleize %></td>
+        <td>
+          <%= form_with model: contact, url: outreach_contact_path(contact), method: :patch do |f| %>
+            <%= f.select :status, OutreachContact::STATUSES, {}, onchange: "this.form.requestSubmit()" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Add contact</h2>
+<%= form_with model: OutreachContact.new, url: outreach_contacts_path do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+
+  <%= f.label :channel %>
+  <%= f.text_field :channel %>
+
+  <%= f.label :kind %>
+  <%= f.select :kind, OutreachContact::KINDS %>
+
+  <%= f.label :budget_cents, "Budget (cents, paid only)" %>
+  <%= f.number_field :budget_cents %>
+
+  <%= f.label :campaign_name, "Campaign (paid only)" %>
+  <%= f.text_field :campaign_name %>
+
+  <%= f.submit "Add" %>
+<% end %>

@@ -1,0 +1,17 @@
+<h1>Team feed</h1>
+
+<%= form_with model: Comment.new, url: messages_path do |f| %>
+  <%= f.label :body, "Post an update" %>
+  <%= f.text_area :body %>
+  <%= f.submit "Post" %>
+<% end %>
+
+<ul>
+  <% @messages.each do |message| %>
+    <li>
+      <strong><%= message.author.email_address %></strong>
+      &mdash; <%= time_ago_in_words(message.created_at) %> ago<br>
+      <%= message.body %>
+    </li>
+  <% end %>
+</ul>

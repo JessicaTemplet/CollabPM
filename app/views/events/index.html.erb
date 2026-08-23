@@ -1,0 +1,33 @@
+<h1>Calendar — <%= Date.current.strftime("%B %Y") %></h1>
+
+<turbo-stream-from stream="<%= [ Current.tenant, :events ] %>"></turbo-stream-from>
+
+<div id="events">
+  <% @events.each do |event| %>
+    <%= render event %>
+  <% end %>
+</div>
+
+<h2>Proposals due this month</h2>
+<ul>
+  <% @proposals_due.each do |proposal| %>
+    <li><%= link_to proposal.title, proposal %> &mdash; due <%= proposal.due_date.strftime("%b %-d") %></li>
+  <% end %>
+</ul>
+
+<h2>New event</h2>
+<%= form_with model: Event.new, url: events_path do |f| %>
+  <%= f.label :title %>
+  <%= f.text_field :title %>
+
+  <%= f.label :start_at %>
+  <%= f.datetime_field :start_at %>
+
+  <%= f.label :end_at %>
+  <%= f.datetime_field :end_at %>
+
+  <%= f.label :all_day %>
+  <%= f.check_box :all_day %>
+
+  <%= f.submit "Add event" %>
+<% end %>

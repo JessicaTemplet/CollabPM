@@ -1,0 +1,4 @@
+<div id="<%= dom_id(event) %>">
+  <strong><%= event.title %></strong>
+  &mdash; <%= event.all_day? ? event.start_at.to_date.strftime("%b %-d") : event.start_at.strftime("%b %-d, %l:%M%P") %>
+</div>

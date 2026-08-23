@@ -1,0 +1,20 @@
+<h1>New document</h1>
+
+<%= form_with model: @document, url: documents_path do |f| %>
+  <% if @document.errors.any? %>
+    <ul>
+      <% @document.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= f.hidden_field :folder_id %>
+
+  <%= f.label :title %>
+  <%= f.text_field :title %>
+
+  <%= f.submit "Create document" %>
+<% end %>
+
+<%= link_to "Back to documents", documents_path(folder_id: @document.folder_id) %>

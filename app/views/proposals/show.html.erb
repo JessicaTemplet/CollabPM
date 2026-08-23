@@ -1,0 +1,18 @@
+<h1><%= @proposal.title %></h1>
+
+<p>
+  Status: <%= @proposal.status.titleize %> &middot;
+  Assignee: <%= @proposal.assignee&.email_address || "Unassigned" %>
+  <% if @proposal.due_date %> &middot; Due <%= @proposal.due_date.strftime("%b %-d, %Y") %><% end %>
+</p>
+
+<p><%= @proposal.description %></p>
+
+<p><%= link_to "Edit", edit_proposal_path(@proposal) %></p>
+
+<h2>Comments</h2>
+<ul>
+  <% @proposal.comments.order(:created_at).each do |comment| %>
+    <li><strong><%= comment.author.email_address %>:</strong> <%= comment.body %></li>
+  <% end %>
+</ul>

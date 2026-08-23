@@ -1,0 +1,24 @@
+<h1><%= @folder ? @folder.name : "Documents" %></h1>
+
+<% if @folder %>
+  <p><%= link_to "Up", documents_path(folder_id: @folder.parent_id) %></p>
+<% end %>
+
+<ul>
+  <% @folders.each do |folder| %>
+    <li><%= link_to "\u{1F4C1} #{folder.name}", documents_path(folder_id: folder.id) %></li>
+  <% end %>
+  <% @documents.each do |document| %>
+    <li><%= link_to document.title, document %></li>
+  <% end %>
+</ul>
+
+<h2>New folder</h2>
+<%= form_with model: Folder.new, url: folders_path do |f| %>
+  <%= f.hidden_field :parent_id, value: @folder&.id %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+  <%= f.submit "Create folder" %>
+<% end %>
+
+<p><%= link_to "New document", new_document_path(folder_id: @folder&.id) %></p>

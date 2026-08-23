@@ -1,0 +1,28 @@
+<%= form_with model: proposal, url: url do |f| %>
+  <% if proposal.errors.any? %>
+    <ul>
+      <% proposal.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= f.label :title %>
+  <%= f.text_field :title %>
+
+  <%= f.label :description %>
+  <%= f.text_area :description %>
+
+  <% if proposal.persisted? %>
+    <%= f.label :status %>
+    <%= f.select :status, Proposal::STATUSES.map { |s| [ s.titleize, s ] } %>
+  <% end %>
+
+  <%= f.label :assignee_id, "Assignee" %>
+  <%= f.collection_select :assignee_id, Current.tenant.users, :id, :email_address, include_blank: true %>
+
+  <%= f.label :due_date %>
+  <%= f.date_field :due_date %>
+
+  <%= f.submit "Save" %>
+<% end %>

@@ -1,0 +1,22 @@
+<h1>Reminders</h1>
+
+<ul>
+  <% @reminders.each do |reminder| %>
+    <li>
+      <%= reminder.remind_at.strftime("%b %-d, %Y %H:%M") %> &mdash;
+      <%= reminder.message %>
+      (<%= reminder.status %>)
+    </li>
+  <% end %>
+</ul>
+
+<h2>New reminder</h2>
+<%= form_with model: Reminder.new, url: reminders_path do |f| %>
+  <%= f.label :remind_at %>
+  <%= f.datetime_field :remind_at %>
+
+  <%= f.label :message %>
+  <%= f.text_field :message %>
+
+  <%= f.submit "Set reminder" %>
+<% end %>

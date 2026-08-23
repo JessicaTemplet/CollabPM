@@ -1,0 +1,37 @@
+<h1>Ledger</h1>
+
+<p>Outstanding balance: $<%= "%.2f" % (@balance_cents / 100.0) %></p>
+
+<table>
+  <thead>
+    <tr><th>Date</th><th>Type</th><th>Method</th><th>Amount</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <% @entries.each do |entry| %>
+      <tr>
+        <td><%= entry.created_at.strftime("%b %-d, %Y") %></td>
+        <td><%= entry.entry_type.titleize %></td>
+        <td><%= entry.method.titleize %></td>
+        <td>$<%= "%.2f" % (entry.amount_cents / 100.0) %></td>
+        <td><%= entry.description %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>New entry</h2>
+<%= form_with model: LedgerEntry.new, url: ledger_entries_path do |f| %>
+  <%= f.label :entry_type %>
+  <%= f.select :entry_type, LedgerEntry::ENTRY_TYPES %>
+
+  <%= f.label :method %>
+  <%= f.select :method, LedgerEntry::METHODS %>
+
+  <%= f.label :amount_cents, "Amount (cents)" %>
+  <%= f.number_field :amount_cents %>
+
+  <%= f.label :description %>
+  <%= f.text_field :description %>
+
+  <%= f.submit "Record entry" %>
+<% end %>

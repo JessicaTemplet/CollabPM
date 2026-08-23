@@ -1,0 +1,27 @@
+class ProjectInfoItemsController < ApplicationController
+  def index
+    @items_by_kind = ProjectInfoItem::KINDS.index_with { |kind| Current.tenant.project_info_items.where(kind: kind).order(:name) }
+  end
+
+  def create
+    @item = Current.tenant.project_info_items.new(item_params)
+    @item.created_by = Current.user
+
+    if @item.save
+      redirect_to project_info_items_path, notice: "Added."
+    else
+      redirect_to project_info_items_path, alert: @item.errors.full_messages.to_sentence
+    end
+  end
+
+  def destroy
+    Current.tenant.project_info_items.find(params[:id]).destroy
+    redirect_to project_info_items_path, notice: "Removed."
+  end
+
+  private
+
+  def item_params
+    params.require(:project_info_item).permit(:kind, :name, details: {})
+  end
+end

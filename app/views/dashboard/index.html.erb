@@ -1,0 +1,19 @@
+<h1>Dashboard</h1>
+<p>Signed in as <%= Current.user.email_address %> at <%= Current.tenant.name %>.</p>
+
+<ul>
+  <li><%= link_to "Documents", documents_path %></li>
+  <li><%= link_to "Proposals", proposals_path %></li>
+  <li><%= link_to "Calendar", events_path %></li>
+  <li><%= link_to "Shared files", files_path %></li>
+  <li><%= link_to "Ledger", ledger_entries_path %></li>
+  <li><%= link_to "Project info", project_info_items_path %></li>
+  <li><%= link_to "Outreach", outreach_contacts_path %></li>
+  <li><%= link_to "Reminders", reminders_path %></li>
+  <li><%= link_to "Team feed", messages_path %></li>
+</ul>
+
+<% if Current.user.role.in?(%w[owner admin]) %>
+  <p><%= link_to "Invites", invites_path %></p>
+<% end %>
+<%= button_to "Sign out", session_path, method: :delete %>

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "collabpm-server",
+      "runtimeExecutable": "C:\\Program Files\\Git\\usr\\bin\\bash.exe",
+      "runtimeArgs": ["-c", "cd /c/Users/jessi/Projects/CollabPM && bin/rails server -p 3000"],
+      "port": 3000,
+      "url": "http://acme.lvh.me:3000"
+    }
+  ]
+}
