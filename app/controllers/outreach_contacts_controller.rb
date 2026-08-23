@@ -10,11 +10,16 @@ class OutreachContactsController < ApplicationController
     if @contact.save
       redirect_to outreach_contacts_path, notice: "Contact added."
     else
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Destination is the fixed outreach_contacts_path; only the alert
+      # text is dynamic (validation error messages).
       redirect_to outreach_contacts_path, alert: @contact.errors.full_messages.to_sentence
     end
   end
 
   def update
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant, the app's tenant-isolation boundary.
     @contact = Current.tenant.outreach_contacts.find(params[:id])
     @contact.update!(contact_params)
     redirect_to outreach_contacts_path, notice: "Updated."
