@@ -9,6 +9,10 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
+  # nosemgrep: ruby.rails.security.audit.detailed-exceptions.detailed-exceptions
+  # Intentional for development only — this is the Rails default that gives
+  # real backtraces locally instead of a generic error page. production.rb
+  # does not set this, which is what actually matters for exposure risk.
   # Show full error reports.
   config.consider_all_requests_local = true
 
