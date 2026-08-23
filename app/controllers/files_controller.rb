@@ -12,6 +12,7 @@ class FilesController < ApplicationController
     # Scoped through the tenant's own attachments, not a bare
     # ActiveStorage::Attachment.find — an attachment id from another
     # tenant must 404 here, not just fail silently.
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
     Current.tenant.shared_files.attachments.find(params[:id]).purge
     redirect_to files_path, notice: "File removed."
   end
