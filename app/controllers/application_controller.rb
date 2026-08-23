@@ -1,3 +1,8 @@
+# nosemgrep: ruby.lang.security.missing-csrf-protection.missing-csrf-protection
+# CSRF protection is on by default for all controllers via
+# config.load_defaults 8.1 (config.action_controller.default_protect_from_forgery),
+# so this doesn't need an explicit protect_from_forgery call. Semgrep's rule
+# doesn't know about that Rails default.
 class ApplicationController < ActionController::Base
   include Authentication
   include SetsDatabaseTenantContext
