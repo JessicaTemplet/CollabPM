@@ -18,6 +18,9 @@ Rails.application.configure do
   # Configure public file server for tests with cache-control for performance.
   config.public_file_server.headers = { "cache-control" => "public, max-age=3600" }
 
+  # nosemgrep: ruby.rails.security.audit.detailed-exceptions.detailed-exceptions
+  # Intentional for the test environment only, same as development.rb —
+  # not set in production.rb, which is what actually matters.
   # Show full error reports.
   config.consider_all_requests_local = true
   config.cache_store = :null_store
