@@ -10,6 +10,9 @@ class RemindersController < ApplicationController
     if @reminder.save
       redirect_to reminders_path, notice: "Reminder set."
     else
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Destination is the fixed reminders_path; only the alert text is
+      # dynamic (validation error messages).
       redirect_to reminders_path, alert: @reminder.errors.full_messages.to_sentence
     end
   end
