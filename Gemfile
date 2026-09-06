@@ -39,3 +39,5 @@ end
 group :test do
   gem "webmock" # for stubbing LemonSqueezy webhook signature tests
 end
+
+gem "thruster", "~> 0.1.26"
