@@ -7,6 +7,10 @@ default: &default
   # Local dev/test default only — production below pulls from ENV with no
   # local fallback, on purpose.
   password: <%= ENV.fetch("DATABASE_PASSWORD") { "grapedesk" } %>
+  # "prefer" negotiates SSL when the server offers it (Neon requires SSL)
+  # and falls back to plaintext when it doesn't (local docker-compose
+  # Postgres) — one setting works for both without an env branch.
+  sslmode: <%= ENV.fetch("DATABASE_SSLMODE", "prefer") %>
 
 development:
   <<: *default
