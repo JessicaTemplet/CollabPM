@@ -79,6 +79,13 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # Tenant subdomain resolution (Current.tenant, TenantScoped) is deployed
+  # under collabpm.syntagmata.com, not a bare domain, so a tenant host is
+  # acme.collabpm.syntagmata.com — 2 trailing labels (collabpm.syntagmata)
+  # plus the actual tld (com) need to be treated as "the domain" for
+  # request.subdomain to resolve to just "acme".
+  config.action_dispatch.tld_length = ENV.fetch("TLD_LENGTH", 2).to_i
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
