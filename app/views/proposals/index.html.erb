@@ -12,9 +12,9 @@
     <div style="flex: 1; min-width: 0;">
       <h2><%= status.titleize %></h2>
       <% @proposals_by_status[status].each do |proposal| %>
-        <div style="border: 1px solid #ccc; padding: 0.5rem; margin-bottom: 0.5rem;">
+        <div style="border: 1px solid var(--border); background: var(--panel); border-radius: 8px; padding: 0.6rem 0.7rem; margin-bottom: 0.5rem;">
           <%= link_to proposal.title, proposal %><br>
-          <small>
+          <small style="color: var(--text-dim);">
             <%= proposal.assignee&.email_address || "Unassigned" %>
             <% if proposal.due_date %> &middot; due <%= proposal.due_date.strftime("%b %-d") %><% end %>
           </small>

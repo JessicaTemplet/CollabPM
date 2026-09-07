@@ -1,0 +1,13 @@
+<% if authenticated? && Current.tenant %>
+  <nav class="topnav">
+    <div class="brand">
+      <span class="mark">C</span>
+      CollabPM <span class="tenant">· <%= Current.tenant.name %></span>
+    </div>
+    <div class="actions">
+      <%= link_to "Dashboard", dashboard_path %>
+      <span><%= Current.user.email_address %></span>
+      <%= button_to "Sign out", session_path, method: :delete %>
+    </div>
+  </nav>
+<% end %>

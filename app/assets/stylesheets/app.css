@@ -1,0 +1,224 @@
+/* CollabPM design system — dark theme, minimal, matches the rest of the
+ * syntagmata.com project registry aesthetic. Deliberately global/element-
+ * based rather than utility classes, since most views here are plain
+ * server-rendered HTML without custom markup. */
+
+:root{
+  --bg: #10121A;
+  --panel: #171922;
+  --panel-alt: #1D2029;
+  --border: #262A38;
+  --border-soft: #1D202B;
+  --text: #E4E6EE;
+  --text-dim: #8B90A3;
+  --text-faint: #565C70;
+  --accent: #5B8CFF;
+  --accent-dim: #1B2440;
+  --danger: #C9564F;
+  --danger-dim: #301C1B;
+  --success: #4FA876;
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+
+*{ box-sizing: border-box; }
+
+html, body{
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+a{ color: var(--accent); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+.page{
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+/* Top nav (tenant app only — see _nav partial) */
+.topnav{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 32px;
+}
+.topnav .brand{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 15px;
+}
+.topnav .brand .mark{
+  width: 26px; height: 26px; border-radius: 6px;
+  background: linear-gradient(155deg, var(--accent), #2f4faa);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #fff;
+}
+.topnav .tenant{ color: var(--text-faint); font-weight: 400; }
+.topnav .actions{ display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-dim); }
+.topnav .actions form{ display: inline; }
+
+h1{ font-size: 24px; font-weight: 700; margin: 0 0 20px; letter-spacing: -0.01em; }
+h2{ font-size: 15px; font-weight: 600; margin: 32px 0 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+h1 + p{ margin-top: -12px; color: var(--text-dim); }
+
+p{ margin: 0 0 16px; }
+
+/* Nav-card grid — used on the dashboard */
+.nav-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+.nav-grid li{ margin: 0; }
+.nav-grid a{
+  display: block;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+.nav-grid a:hover{ border-color: var(--accent); text-decoration: none; }
+
+/* Plain lists elsewhere (folders/documents, invites, etc.) */
+ul:not(.nav-grid){ padding-left: 20px; }
+ul:not(.nav-grid) li{ margin-bottom: 6px; }
+
+/* Forms */
+form{ margin: 0 0 20px; }
+label{
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin: 14px 0 5px;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+textarea,
+select{
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 11px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+textarea{ max-width: none; font-family: var(--font-mono); }
+input:focus, textarea:focus, select:focus{
+  outline: none;
+  border-color: var(--accent);
+}
+
+input[type="submit"], button, .btn{
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+input[type="submit"]:hover, button:hover, .btn:hover{ opacity: 0.9; }
+
+/* Rails button_to renders a form with an input[type=submit]; sign-out etc.
+ * should read as a quiet secondary action, not a primary CTA. */
+.topnav input[type="submit"]{
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  font-weight: 500;
+}
+.topnav input[type="submit"]:hover{ color: var(--text); border-color: var(--text-dim); }
+
+/* Tables (ledger, outreach, etc.) */
+table{ width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+th{
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  font-weight: 600;
+  padding: 0 10px 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+td{ padding: 10px; border-bottom: 1px solid var(--border-soft); font-size: 13.5px; }
+
+/* Status / connection badges (document editor) */
+.badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--panel-alt);
+  color: var(--text-dim);
+}
+.badge::before{ content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint); }
+.badge.connected{ background: rgba(79,168,118,0.12); color: var(--success); }
+.badge.connected::before{ background: var(--success); }
+.badge.connecting::before{ background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{ opacity: 1; } 50%{ opacity: 0.3; } }
+
+/* Document editor panel */
+.editor-panel{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.editor-panel textarea{
+  width: 100%;
+  min-height: 380px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.empty-note{ color: var(--text-faint); font-style: italic; }
+
+/* Flash messages */
+.flash{
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+}
+.flash.notice{ background: var(--accent-dim); color: #B7C8FF; }
+.flash.alert{ background: var(--danger-dim); color: #F0A6A2; }

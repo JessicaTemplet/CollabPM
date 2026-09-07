@@ -33,9 +33,9 @@ export default class extends Controller {
     this.subscription = consumer.subscriptions.create(
       { channel: "DocumentChannel", document_id: this.documentIdValue },
       {
-        connected: () => this.setStatus("Connected"),
-        disconnected: () => this.setStatus("Disconnected — reconnecting…"),
-        rejected: () => this.setStatus("Couldn't open this document"),
+        connected: () => this.setStatus("Connected", "connected"),
+        disconnected: () => this.setStatus("Disconnected — reconnecting…", "connecting"),
+        rejected: () => this.setStatus("Couldn't open this document", ""),
         received: (data) => this.handleReceived(data),
       },
     )
@@ -135,8 +135,10 @@ export default class extends Controller {
     }, 4000)
   }
 
-  setStatus(text) {
-    if (this.hasStatusTarget) this.statusTarget.textContent = text
+  setStatus(text, state = "connecting") {
+    if (!this.hasStatusTarget) return
+    this.statusTarget.textContent = text
+    this.statusTarget.className = "badge" + (state ? ` ${state}` : "")
   }
 }
 
