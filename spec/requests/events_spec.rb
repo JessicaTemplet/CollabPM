@@ -16,11 +16,15 @@ RSpec.describe "Events", type: :request do
   end
 
   it "creates an event" do
+    start_at = 1.day.from_now
     post events_path, params: {
-      event: { title: "Standup", start_at: 1.day.from_now, end_at: 1.day.from_now + 30.minutes }
+      event: { title: "Standup", start_at: start_at, end_at: start_at + 30.minutes }
     }
 
-    expect(response).to redirect_to(events_path)
+    # Redirects to the month the new event actually falls in, not always the
+    # current month — matters once you add something for next month and
+    # don't want it to vanish the moment you're sent back to today.
+    expect(response).to redirect_to(events_path(month: start_at.to_date.strftime("%Y-%m")))
     Current.tenant = tenant
     expect(Event.find_by(title: "Standup")).to be_present
     Current.tenant = nil
@@ -47,9 +51,25 @@ RSpec.describe "Events", type: :request do
 
     delete event_path(event)
 
-    expect(response).to redirect_to(events_path)
+    expect(response).to redirect_to(events_path(month: event.start_at.to_date.strftime("%Y-%m")))
     Current.tenant = tenant
     expect(Event.find_by(id: event.id)).to be_nil
     Current.tenant = nil
+  end
+
+  it "navigates to a different month and only shows that month's events" do
+    Current.tenant = tenant
+    next_month_date = (Date.current.beginning_of_month + 1.month) + 1.day
+    create(:event, tenant: tenant, created_by: owner, title: "Future Kickoff",
+      start_at: next_month_date.to_time.change(hour: 10), end_at: next_month_date.to_time.change(hour: 11))
+    create(:event, tenant: tenant, created_by: owner, title: "This Month Standup",
+      start_at: Date.current.beginning_of_month.to_time + 1.day, end_at: Date.current.beginning_of_month.to_time + 1.day + 1.hour)
+    Current.tenant = nil
+
+    get events_path(month: next_month_date.strftime("%Y-%m"))
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Future Kickoff")
+    expect(response.body).not_to include("This Month Standup")
   end
 end

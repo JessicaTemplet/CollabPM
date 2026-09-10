@@ -5,10 +5,36 @@ class EventsController < ApplicationController
   # Proposal; the calendar just also queries proposals-with-due-dates and
   # merges them in for display.
   def index
-    range = (Date.current.beginning_of_month)..(Date.current.end_of_month)
+    @month = parse_month(params[:month]) || Date.current.beginning_of_month
+    @prev_month = @month.prev_month
+    @next_month = @month.next_month
 
-    @events = Current.tenant.events.where(start_at: range.first.beginning_of_day..range.last.end_of_day).order(:start_at)
-    @proposals_due = Current.tenant.proposals.where(due_date: range).order(:due_date)
+    # Grid runs Sunday-to-Saturday and pads into the adjacent months so the
+    # calendar always renders full weeks, not a ragged first/last row.
+    grid_start = @month.beginning_of_month - @month.beginning_of_month.wday.days
+    grid_end = @month.end_of_month + (6 - @month.end_of_month.wday).days
+
+    events = Current.tenant.events
+      .where(start_at: grid_start.beginning_of_day..grid_end.end_of_day)
+      .order(:start_at)
+    proposals_due = Current.tenant.proposals
+      .where(due_date: grid_start..grid_end)
+      .order(:due_date)
+
+    events_by_day = events.group_by { |event| event.start_at.to_date }
+    proposals_by_day = proposals_due.group_by(&:due_date)
+
+    @weeks = (grid_start..grid_end).each_slice(7).map do |week|
+      week.map do |date|
+        {
+          date: date,
+          current_month: date.month == @month.month,
+          today: date == Date.current,
+          events: events_by_day[date] || [],
+          proposals: proposals_by_day[date] || []
+        }
+      end
+    end
   end
 
   def create
@@ -16,7 +42,7 @@ class EventsController < ApplicationController
     @event.created_by = Current.user
 
     if @event.save
-      redirect_to events_path, notice: "Event created."
+      redirect_to events_path(month: @event.start_at.to_date.strftime("%Y-%m")), notice: "Event created."
     else
       # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
       # Destination is the fixed events_path; only the flash alert text is
@@ -28,11 +54,20 @@ class EventsController < ApplicationController
   def destroy
     # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
     # Scoped to Current.tenant, the app's tenant-isolation boundary.
-    Current.tenant.events.find(params[:id]).destroy
-    redirect_to events_path, notice: "Event removed."
+    event = Current.tenant.events.find(params[:id])
+    month = event.start_at.to_date.strftime("%Y-%m")
+    event.destroy
+    redirect_to events_path(month: month), notice: "Event removed."
   end
 
   private
+
+  def parse_month(value)
+    return nil if value.blank?
+    Date.strptime(value, "%Y-%m").beginning_of_month
+  rescue ArgumentError
+    nil
+  end
 
   def event_params
     params.require(:event).permit(:title, :description, :start_at, :end_at, :all_day)

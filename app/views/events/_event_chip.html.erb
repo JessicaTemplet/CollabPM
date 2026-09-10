@@ -1,0 +1,8 @@
+<div id="<%= dom_id(event) %>" class="cal-event">
+  <span class="cal-event-time"><%= event.all_day? ? "All day" : event.start_at.strftime("%-l:%M%P") %></span>
+  <span class="cal-event-title"><%= event.title %></span>
+  <%= button_to "×", event_path(event),
+        method: :delete,
+        class: "cal-event-remove",
+        form: { data: { turbo_confirm: "Remove this event?" } } %>
+</div>

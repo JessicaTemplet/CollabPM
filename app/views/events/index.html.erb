@@ -1,22 +1,43 @@
-<h1>Calendar — <%= Date.current.strftime("%B %Y") %></h1>
+<div class="cal-header">
+  <h1><%= @month.strftime("%B %Y") %></h1>
+  <div class="cal-nav">
+    <%= link_to "‹ Prev", events_path(month: @prev_month.strftime("%Y-%m")), class: "btn-quiet" %>
+    <%= link_to "Today", events_path, class: "btn-quiet" %>
+    <%= link_to "Next ›", events_path(month: @next_month.strftime("%Y-%m")), class: "btn-quiet" %>
+  </div>
+</div>
 
 <turbo-stream-from stream="<%= [ Current.tenant, :events ] %>"></turbo-stream-from>
 
-<div id="events">
-  <% @events.each do |event| %>
-    <%= render event %>
+<div class="cal-grid">
+  <div class="cal-weekdays">
+    <% %w[Sun Mon Tue Wed Thu Fri Sat].each do |day_name| %>
+      <div class="cal-weekday"><%= day_name %></div>
+    <% end %>
+  </div>
+
+  <% @weeks.each do |week| %>
+    <div class="cal-week">
+      <% week.each do |day| %>
+        <div id="day-<%= day[:date].iso8601 %>"
+             class="cal-day<%= " is-outside" unless day[:current_month] %><%= " is-today" if day[:today] %>">
+          <div class="cal-day-num"><%= day[:date].day %></div>
+          <% day[:events].each do |event| %>
+            <%= render "events/event_chip", event: event %>
+          <% end %>
+          <% day[:proposals].each do |proposal| %>
+            <div class="cal-proposal">
+              <span class="cal-proposal-label">Due</span><%= link_to proposal.title, proposal %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>
 
-<h2>Proposals due this month</h2>
-<ul>
-  <% @proposals_due.each do |proposal| %>
-    <li><%= link_to proposal.title, proposal %> &mdash; due <%= proposal.due_date.strftime("%b %-d") %></li>
-  <% end %>
-</ul>
-
 <h2>New event</h2>
-<%= form_with model: Event.new, url: events_path do |f| %>
+<%= form_with model: Event.new, url: events_path(month: @month.strftime("%Y-%m")) do |f| %>
   <%= f.label :title %>
   <%= f.text_field :title %>
 
