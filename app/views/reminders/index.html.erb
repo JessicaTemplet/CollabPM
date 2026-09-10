@@ -1,14 +1,18 @@
 <h1>Reminders</h1>
 
-<ul>
-  <% @reminders.each do |reminder| %>
-    <li>
-      <%= reminder.remind_at.strftime("%b %-d, %Y %H:%M") %> &mdash;
-      <%= reminder.message %>
-      (<%= reminder.status %>)
-    </li>
-  <% end %>
-</ul>
+<% if @reminders.any? %>
+  <div class="activity-list">
+    <% @reminders.each do |reminder| %>
+      <div class="card activity-row">
+        <span class="action"><%= reminder.message %></span>
+        <span class="badge badge-tone-<%= status_tone(reminder.status) %>"><%= reminder.status.titleize %></span>
+        <span class="when"><%= reminder.remind_at.strftime("%b %-d, %Y %H:%M") %></span>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">No reminders set.</p>
+<% end %>
 
 <h2>New reminder</h2>
 <%= form_with model: Reminder.new, url: reminders_path do |f| %>

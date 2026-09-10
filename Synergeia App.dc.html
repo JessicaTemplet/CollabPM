@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',sans-serif}
+input,textarea,select{font-family:'Inter',sans-serif;outline:none}
+::placeholder{opacity:.6}
+</style>
+</helmet>
+
+<div style="width:100%;height:100vh;overflow:hidden">
+
+<sc-if value="{{ isMarketing }}" hint-placeholder-val="{{ false }}">
+  <div style="width:100%;height:100vh;overflow-y:auto;background:{{ t.bg }};background-image:{{ t.bgGrad }};display:flex;flex-direction:column;align-items:center;padding:80px 24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:40px">
+      <div style="width:34px;height:34px;border-radius:9px;background:{{ t.accent }};box-shadow:0 0 18px {{ t.accentGlow }};display:flex;align-items:center;justify-content:center;color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:800 17px 'Sora'">S</div>
+      <span style="font:800 17px 'Sora';color:{{ t.text }};letter-spacing:.03em">SYNERGEIA</span>
+    </div>
+    <div style="max-width:600px;text-align:center">
+      <div style="font:800 40px/1.2 'Sora';color:{{ t.text }};text-wrap:pretty">Real-time collaboration for client-facing teams.</div>
+      <div style="font:500 15px/1.6 'Inter';color:{{ t.textDim }};margin-top:18px">Shared documents, proposals, a calendar, files, a ledger and outreach tracking — all in one workspace, scoped to your team.</div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:30px">
+        <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 13px 'Inter';padding:12px 24px;border-radius:8px;cursor:pointer;transition:transform .12s" style-hover="transform:translateY(-1px)" onClick="{{ goSignin }}">Sign in</div>
+        <div style="border:1px solid {{ t.border }};color:{{ t.text }};font:700 13px 'Inter';padding:12px 24px;border-radius:8px;cursor:pointer" onClick="{{ goPricing }}">See pricing</div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isPricing }}" hint-placeholder-val="{{ false }}">
+  <div style="width:100%;height:100vh;overflow-y:auto;background:{{ t.bg }};background-image:{{ t.bgGrad }};display:flex;flex-direction:column;align-items:center;padding:70px 24px">
+    <div style="font:800 32px 'Sora';color:{{ t.text }};margin-bottom:8px">Pricing</div>
+    <div style="font:500 14px 'Inter';color:{{ t.textDim }};margin-bottom:36px">Simple per-seat pricing. Cancel anytime.</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;justify-content:center;max-width:920px">
+      <sc-for list="{{ plans }}" as="plan" hint-placeholder-count="3">
+        <div style="width:260px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:6px">
+          <div style="font:700 12px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em">{{ plan.name }}</div>
+          <div style="font:800 30px 'Sora';color:{{ t.text }}">{{ plan.price }}<span style="font:500 12px 'Inter';color:{{ t.textDim }}"> /seat/mo</span></div>
+          <div style="font:400 12.5px/1.6 'Inter';color:{{ t.textDim }};margin-top:8px">{{ plan.blurb }}</div>
+          <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 0;border-radius:7px;cursor:pointer;text-align:center;margin-top:14px" onClick="{{ goSignup }}">Get started</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:700 12px 'Inter';color:{{ t.accentBright }};cursor:pointer;margin-top:36px" onClick="{{ goMarketing }}">← Back home</div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isSignin }}" hint-placeholder-val="{{ false }}">
+  <div style="width:100%;height:100vh;display:flex;align-items:center;justify-content:center;background:{{ t.bg }};background-image:{{ t.bgGrad }}">
+    <div style="width:360px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:12px;padding:28px">
+      <div style="font:800 19px 'Sora';color:{{ t.text }};margin-bottom:4px">Sign in</div>
+      <div style="font:500 12px 'Inter';color:{{ t.textDim }};margin-bottom:20px">Acme workspace</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <input value="{{ authForm.email }}" onChange="{{ setAuthEmail }}" placeholder="Email address" style="width:100%;padding:10px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.bg }};color:{{ t.text }};font-size:13px">
+        <input type="password" value="{{ authForm.password }}" onChange="{{ setAuthPassword }}" placeholder="Password" style="width:100%;padding:10px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.bg }};color:{{ t.text }};font-size:13px">
+        <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 13px 'Inter';padding:10px 0;border-radius:7px;cursor:pointer;text-align:center" onClick="{{ submitAuth }}">Sign in</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:16px">
+        <span style="font:600 11.5px 'Inter';color:{{ t.accentBright }};cursor:pointer" onClick="{{ goReset }}">Forgot password?</span>
+        <span style="font:600 11.5px 'Inter';color:{{ t.accentBright }};cursor:pointer" onClick="{{ goSignup }}">Sign up</span>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+  <div style="width:100%;height:100vh;display:flex;align-items:center;justify-content:center;background:{{ t.bg }};background-image:{{ t.bgGrad }}">
+    <div style="width:360px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:12px;padding:28px">
+      <div style="font:800 19px 'Sora';color:{{ t.text }};margin-bottom:4px">Create your account</div>
+      <div style="font:500 12px 'Inter';color:{{ t.textDim }};margin-bottom:20px">Join your team's workspace</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <input value="{{ authForm.email }}" onChange="{{ setAuthEmail }}" placeholder="Email address" style="width:100%;padding:10px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.bg }};color:{{ t.text }};font-size:13px">
+        <input type="password" value="{{ authForm.password }}" onChange="{{ setAuthPassword }}" placeholder="Password" style="width:100%;padding:10px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.bg }};color:{{ t.text }};font-size:13px">
+        <input type="password" value="{{ authForm.confirm }}" onChange="{{ setAuthConfirm }}" placeholder="Confirm password" style="width:100%;padding:10px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.bg }};color:{{ t.text }};font-size:13px">
+        <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 13px 'Inter';padding:10px 0;border-radius:7px;cursor:pointer;text-align:center" onClick="{{ submitAuth }}">Sign up</div>
+      </div>
+      <div style="font:600 11.5px 'Inter';color:{{ t.accentBright }};cursor:pointer;margin-top:16px" onClick="{{ goSignin }}">Already have an account? Sign in</div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
+  <div style="width:100%;height:100vh;display:flex;align-items:center;justify-content:center;background:{{ t.bg }};background-image:{{ t.bgGrad }}">
+    <div style="width:360px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:12px;padding:28px">
+      <div style="font:800 19px 'Sora';color:{{ t.text }};margin-bottom:16px">Reset your password</div>
+      <sc-if value="{{ resetSent }}" hint-placeholder-val="{{ false }}">
+        <div style="font:500 13px/1.6 'Inter';color:{{ t.textDim }}">Check your inbox for a reset link.</div>
+      </sc-if>
+      <sc-if value="{{ resetNotSent }}" hint-placeholder-val="{{ true }}">
+        <input value="{{ authForm.email }}" onChange="{{ setAuthEmail }}" placeholder="Email address" style="width:100%;padding:10px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.bg }};color:{{ t.text }};font-size:13px;margin-bottom:12px">
+        <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 13px 'Inter';padding:10px 0;border-radius:7px;cursor:pointer;text-align:center" onClick="{{ submitReset }}">Email reset instructions</div>
+      </sc-if>
+      <div style="font:600 11.5px 'Inter';color:{{ t.accentBright }};cursor:pointer;margin-top:16px" onClick="{{ goSignin }}">← Back to sign in</div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;height:100vh;display:flex;flex-direction:column;overflow:hidden;background:{{ t.bg }};background-image:{{ t.bgGrad }};transition:background .2s">
+
+  <div style="height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid {{ t.border }};background:{{ t.surfaceBg }}">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;border-radius:8px;background:{{ t.accentMetal }};box-shadow:0 0 18px {{ t.accentGlow }};display:flex;align-items:center;justify-content:center;color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:800 15px 'Sora'">S</div>
+      <span style="font:800 15px 'Sora';color:{{ t.text }};letter-spacing:.03em">SYNERGEIA</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px">
+      <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:7px 14px;border-radius:7px;cursor:pointer;transition:transform .12s,box-shadow .12s" style-hover="transform:translateY(-1px);box-shadow:0 4px 14px {{ t.accentGlow }}" onClick="{{ signOut }}">Sign out</div>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0">
+
+    <div style="width:196px;flex-shrink:0;background:{{ t.surfaceBg }};border-right:1px solid {{ t.surfaceBorder }};display:flex;flex-direction:column">
+      <div style="flex:1;overflow-y:auto;padding:14px 10px;display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="11">
+          <div style="padding:9px 12px;border-radius:6px;border-left:3px solid {{ item.borderColor }};background:{{ item.bg }};color:{{ item.color }};font-weight:{{ item.weight }};font-size:12.5px;font-family:'Inter';cursor:pointer;transition:background .15s,border-color .15s" style-hover="background:{{ item.hoverBg }}" onClick="{{ item.go }}">{{ item.label }}</div>
+        </sc-for>
+      </div>
+      <div style="padding:12px 14px;border-top:1px solid {{ t.border }};display:flex;align-items:center;justify-content:space-between;flex-shrink:0;cursor:pointer" onClick="{{ toggleMode }}">
+        <span style="font:600 11px 'Inter';color:{{ t.textDim }}">{{ modeLabel }} mode</span>
+        <div style="width:38px;height:20px;border-radius:10px;background:{{ silverMetal }};border:1px solid {{ t.border }};position:relative;flex-shrink:0">
+          <div style="position:absolute;top:1px;left:{{ knobLeft }};width:16px;height:16px;border-radius:50%;background:{{ t.accentMetal }};box-shadow:0 0 8px {{ t.accentGlow }};transition:left .15s"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:26px 30px 60px">
+
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }}">Dashboard</div>
+        <div style="font:500 13px 'Inter';color:{{ t.textDim }};margin-top:4px;margin-bottom:22px">Overview of your workspace.</div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:26px">
+          <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+            <div style="position:relative;overflow:hidden;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;padding:16px;transition:transform .15s,box-shadow .15s;box-shadow:0 1px 3px rgba(0,0,0,.03)" style-hover="transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08)">
+              <div style="position:absolute;top:0;left:0;right:0;height:3px;background:{{ s.colorMetal }}"></div>
+              <div style="font:700 24px 'Sora';color:{{ t.text }}">{{ s.value }}</div>
+              <div style="font:500 12px 'Inter';color:{{ t.textDim }};margin-top:4px">{{ s.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font:700 13px 'Sora';color:{{ t.text }};margin-bottom:10px">Recent activity</div>
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:640px">
+          <sc-for list="{{ activity }}" as="a" hint-placeholder-count="4">
+            <div style="display:flex;gap:10px;padding:11px 14px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:9px">
+              <span style="font:700 12px 'Inter';color:{{ t.accentBright }};flex-shrink:0">{{ a.who }}</span>
+              <span style="font:400 12.5px 'Inter';color:{{ t.text }};flex:1">{{ a.action }}</span>
+              <span style="font:500 11px 'Inter';color:{{ t.textFaint }};flex-shrink:0">{{ a.when }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDocuments }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ isDocEditorOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;max-width:760px">
+            <div style="font:800 20px 'Sora';color:{{ t.text }}">{{ openDocument.name }}</div>
+            <span style="font:700 10.5px 'Inter';letter-spacing:.04em;padding:5px 12px;border-radius:20px;background:{{ t.accentSoft }};color:{{ docStatusColor }}">{{ docStatusLabel }}</span>
+          </div>
+          <textarea readonly="{{ true }}" value="{{ openDocument.body }}" style="width:100%;max-width:760px;min-height:420px;padding:16px;border:1px solid {{ t.cardBorder }};border-radius:10px;background:{{ t.card }};color:{{ t.text }};font:400 13.5px/1.6 'Inter';resize:vertical"></textarea>
+          <div style="margin-top:14px;font:700 12px 'Inter';color:{{ t.accentBright }};cursor:pointer" onClick="{{ closeDocument }}">← Back to documents</div>
+        </sc-if>
+        <sc-if value="{{ isDocList }}" hint-placeholder-val="{{ true }}">
+          <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">{{ docHeading }}</div>
+          <sc-if value="{{ currentFolder }}" hint-placeholder-val="{{ false }}">
+            <div style="font:700 12px 'Inter';color:{{ t.accentBright }};cursor:pointer;margin-bottom:14px" onClick="{{ goUpFolder }}">‹ Up to Documents</div>
+          </sc-if>
+          <div style="display:flex;gap:10px;margin-bottom:16px">
+            <input value="{{ docQuery }}" onChange="{{ setDocQuery }}" placeholder="Search documents…" style="flex:1;max-width:320px;padding:9px 12px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:12.5px">
+            <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 16px;border-radius:7px;cursor:pointer;transition:transform .12s,box-shadow .12s" style-hover="transform:translateY(-1px);box-shadow:0 6px 16px {{ t.accentGlow }}">Upload</div>
+          </div>
+          <sc-if value="{{ atRoot }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px">
+              <sc-for list="{{ folders }}" as="f" hint-placeholder-count="2">
+                <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer" onClick="{{ f.open }}">
+                  <div style="width:28px;height:28px;border-radius:7px;background:{{ silverMetal }};flex-shrink:0"></div>
+                  <span style="font:700 12.5px 'Inter';color:{{ t.text }}">{{ f.name }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 16px;border-bottom:1px solid {{ t.border }};font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em">
+              <span>NAME</span><span>TYPE</span><span>OWNER</span><span>MODIFIED</span>
+            </div>
+            <sc-for list="{{ filteredDocuments }}" as="d" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:11px 16px;border-bottom:1px solid {{ t.border }};font:500 12.5px 'Inter';color:{{ t.text }};align-items:center;cursor:pointer" onClick="{{ d.open }}">
+                <span>{{ d.name }}</span><span style="color:{{ t.textDim }}">{{ d.type }}</span><span style="color:{{ t.textDim }}">{{ d.owner }}</span><span style="color:{{ t.textDim }}">{{ d.modified }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;max-width:360px">
+            <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:6px">NEW FOLDER</div>
+            <div style="display:flex;gap:8px">
+              <input value="{{ newFolderName }}" onChange="{{ setNewFolderName }}" placeholder="Folder name" style="flex:1;padding:8px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:12.5px">
+              <div style="background:{{ t.card }};border:1px solid {{ t.border }};color:{{ t.text }};font:700 12px 'Inter';padding:8px 14px;border-radius:7px;cursor:pointer" onClick="{{ addFolder }}">Create</div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isProposals }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ proposalIsList }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+            <div style="font:800 22px 'Sora';color:{{ t.text }}">Proposals</div>
+            <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 16px;border-radius:7px;cursor:pointer;transition:transform .12s,box-shadow .12s" style-hover="transform:translateY(-1px);box-shadow:0 6px 16px {{ t.accentGlow }}" onClick="{{ newProposal }}">New Proposal</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;max-width:720px">
+            <sc-for list="{{ proposals }}" as="p" hint-placeholder-count="4">
+              <div style="position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:14px 16px 14px 20px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:9px;cursor:pointer;transition:transform .15s,box-shadow .15s" style-hover="transform:translateX(3px);box-shadow:0 6px 18px rgba(0,0,0,.06)" onClick="{{ p.open }}">
+                <div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:{{ p.colorMetal }}"></div>
+                <div style="flex:1">
+                  <div style="font:700 13.5px 'Sora';color:{{ t.text }}">{{ p.title }}</div>
+                  <div style="font:500 11.5px 'Inter';color:{{ t.textDim }};margin-top:2px">{{ p.client }}</div>
+                </div>
+                <span style="font:700 12px 'Inter';color:{{ t.text }}">{{ p.value }}</span>
+                <span style="font:600 10.5px 'Inter';color:{{ p.color }};background:{{ t.accentSoft }};border-radius:20px;padding:4px 11px">{{ p.status }}</span>
+                <span style="font:500 11px 'Inter';color:{{ t.textFaint }};width:44px;text-align:right">{{ p.date }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ proposalIsDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:640px">
+            <div style="font:700 12px 'Inter';color:{{ t.accentBright }};cursor:pointer;margin-bottom:14px" onClick="{{ backToProposalList }}">← Back to proposals</div>
+            <div style="font:800 22px 'Sora';color:{{ t.text }}">{{ selectedProposal.title }}</div>
+            <div style="font:500 12.5px 'Inter';color:{{ t.textDim }};margin-top:6px">Status: {{ selectedProposal.status }} · Assignee: {{ selectedProposal.assignee }} · Due {{ selectedProposal.date }}</div>
+            <div style="font:400 13.5px/1.6 'Inter';color:{{ t.text }};margin-top:14px">{{ selectedProposal.description }}</div>
+            <div style="font:700 12px 'Inter';color:{{ t.accentBright }};cursor:pointer;margin-top:14px;display:inline-block" onClick="{{ editProposal }}">Edit</div>
+            <div style="font:700 13px 'Sora';color:{{ t.text }};margin-top:26px;margin-bottom:10px">Comments</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ proposalComments }}" as="c" hint-placeholder-count="2">
+                <div style="padding:10px 14px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:9px">
+                  <span style="font:700 12px 'Inter';color:{{ t.accentBright }}">{{ c.author }}: </span>
+                  <span style="font:400 12.5px 'Inter';color:{{ t.text }}">{{ c.body }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ proposalIsForm }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:520px">
+            <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">{{ proposalFormHeading }}</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">TITLE</div>
+                <input value="{{ proposalForm.title }}" onChange="{{ setProposalFormTitle }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">DESCRIPTION</div>
+                <textarea rows="4" onChange="{{ setProposalFormDescription }}" style="width:100%;padding:10px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:12.5px;resize:vertical">{{ proposalForm.description }}</textarea>
+              </div>
+              <sc-if value="{{ proposalFormIsEdit }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">STATUS</div>
+                  <select value="{{ proposalForm.status }}" onChange="{{ setProposalFormStatus }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+                    <option value="Draft">Draft</option>
+                    <option value="Sent">Sent</option>
+                    <option value="In Review">In Review</option>
+                    <option value="Accepted">Accepted</option>
+                  </select>
+                </div>
+              </sc-if>
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">ASSIGNEE</div>
+                <select value="{{ proposalForm.assignee }}" onChange="{{ setProposalFormAssignee }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+                  <sc-for list="{{ team }}" as="mem" hint-placeholder-count="4">
+                    <option value="{{ mem.name }}">{{ mem.name }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">DUE DATE</div>
+                <input value="{{ proposalForm.date }}" onChange="{{ setProposalFormDate }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+              <div style="display:flex;gap:10px;margin-top:6px">
+                <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 18px;border-radius:7px;cursor:pointer" onClick="{{ saveProposalForm }}">Save</div>
+                <div style="font:700 12px 'Inter';color:{{ t.textDim }};padding:9px 6px;cursor:pointer" onClick="{{ backToProposalList }}">Cancel</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">Calendar</div>
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-bottom:24px">
+          <sc-for list="{{ calendarCols }}" as="c" hint-placeholder-count="7">
+            <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:9px;padding:10px;min-height:110px">
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.05em;margin-bottom:8px">{{ c.day }}</div>
+              <sc-for list="{{ c.events }}" as="e" hint-placeholder-count="1">
+                <div style="background:{{ t.accentSoft }};border-left:2px solid {{ t.accent }};border-radius:5px;padding:5px 6px;margin-bottom:5px">
+                  <div style="font:600 10px 'Inter';color:{{ t.text }};line-height:1.3">{{ e.title }}</div>
+                  <div style="font:500 9px 'Inter';color:{{ t.textDim }};margin-top:2px">{{ e.time }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font:700 13px 'Sora';color:{{ t.text }};margin-bottom:10px">This week's agenda</div>
+        <div style="display:flex;flex-direction:column;gap:7px;max-width:520px">
+          <sc-for list="{{ agenda }}" as="ag" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:8px">
+              <span style="font:600 12px 'Inter';color:{{ t.text }}">{{ ag.title }}</span>
+              <span style="font:500 11px 'Inter';color:{{ t.textDim }}">{{ ag.when }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFiles }}" hint-placeholder-val="{{ false }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">Shared Files</div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+          <sc-for list="{{ files }}" as="f" hint-placeholder-count="4">
+            <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08)">
+              <div style="width:34px;height:34px;border-radius:8px;background:{{ silverMetal }};border:1px solid {{ t.border }}"></div>
+              <div style="font:700 12.5px 'Inter';color:{{ t.text }}">{{ f.name }}</div>
+              <div style="font:500 11px 'Inter';color:{{ t.textDim }}">{{ f.size }} · {{ f.shared }}</div>
+              <div style="font:700 11px 'Inter';color:{{ t.accentBright }};cursor:pointer">Share</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLedger }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+          <div style="font:800 22px 'Sora';color:{{ t.text }}">Ledger</div>
+          <div style="text-align:right">
+            <div style="font:500 11px 'Inter';color:{{ t.textDim }}">Current balance</div>
+            <div style="font:800 20px 'Sora';color:{{ t.accentBright }}">{{ ledgerBalanceLabel }}</div>
+          </div>
+        </div>
+        <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:90px 2fr 1fr 110px 110px;padding:10px 16px;border-bottom:1px solid {{ t.border }};font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em">
+            <span>DATE</span><span>DESCRIPTION</span><span>CATEGORY</span><span style="text-align:right">AMOUNT</span><span style="text-align:right">BALANCE</span>
+          </div>
+          <sc-for list="{{ ledger }}" as="row" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:90px 2fr 1fr 110px 110px;padding:11px 16px;border-bottom:1px solid {{ t.border }};font:500 12.5px 'Inter';color:{{ t.text }};align-items:center">
+              <span style="color:{{ t.textDim }}">{{ row.date }}</span><span>{{ row.desc }}</span><span style="color:{{ t.textDim }}">{{ row.category }}</span>
+              <span style="text-align:right;font-weight:700;color:{{ row.amountColor }}">{{ row.amountLabel }}</span>
+              <span style="text-align:right;color:{{ t.textDim }}">{{ row.balanceLabel }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProject }}" hint-placeholder-val="{{ false }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">Project Info</div>
+        <div style="display:flex;gap:24px;max-width:760px">
+          <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">PROJECT NAME</div>
+              <input value="{{ projectFields.name }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+            </div>
+            <div>
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">CLIENT</div>
+              <input value="{{ projectFields.client }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+            </div>
+            <div style="display:flex;gap:12px">
+              <div style="flex:1">
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">START DATE</div>
+                <input value="{{ projectFields.start }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+              <div style="flex:1">
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">DUE DATE</div>
+                <input value="{{ projectFields.due }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+            </div>
+            <div>
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">DESCRIPTION</div>
+              <textarea rows="4" style="width:100%;padding:10px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:12.5px;resize:vertical">{{ projectFields.description }}</textarea>
+            </div>
+          </div>
+          <div style="width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px">
+            <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em">STATUS</div>
+            <span style="font:700 11px 'Inter';color:{{ t.accentBright }};background:{{ t.accentSoft }};border-radius:20px;padding:5px 12px;width:fit-content">{{ projectFields.status }}</span>
+            <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-top:8px">TEAM</div>
+            <sc-for list="{{ team }}" as="mem" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;padding:8px 10px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:7px">
+                <span style="font:600 12px 'Inter';color:{{ t.text }}">{{ mem.name }}</span>
+                <span style="font:500 11px 'Inter';color:{{ t.textDim }}">{{ mem.role }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOutreach }}" hint-placeholder-val="{{ false }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">Outreach</div>
+        <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;overflow:hidden;margin-bottom:22px">
+          <div style="display:grid;grid-template-columns:1.2fr 1.2fr 1fr 0.8fr 1fr 0.8fr;padding:10px 16px;border-bottom:1px solid {{ t.border }};font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em">
+            <span>CONTACT</span><span>COMPANY</span><span>CHANNEL</span><span>KIND</span><span>STAGE</span><span>LAST TOUCH</span>
+          </div>
+          <sc-for list="{{ outreach }}" as="o" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:1.2fr 1.2fr 1fr 0.8fr 1fr 0.8fr;padding:11px 16px;border-bottom:1px solid {{ t.border }};font:500 12.5px 'Inter';color:{{ t.text }};align-items:center">
+              <span>{{ o.contact }}</span><span style="color:{{ t.textDim }}">{{ o.company }}</span><span style="color:{{ t.textDim }}">{{ o.channel }}</span><span style="color:{{ t.textDim }}">{{ o.kind }}</span>
+              <span><span style="font:600 10.5px 'Inter';color:{{ o.color }};background:{{ t.accentSoft }};border-radius:20px;padding:3px 10px">{{ o.stage }}</span></span>
+              <span style="color:{{ t.textDim }}">{{ o.last }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="max-width:420px">
+          <div style="font:700 13px 'Sora';color:{{ t.text }};margin-bottom:10px">Add contact</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">NAME</div>
+              <input value="{{ outreachForm.name }}" onChange="{{ setOutreachName }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+            </div>
+            <div>
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">CHANNEL</div>
+              <input value="{{ outreachForm.channel }}" onChange="{{ setOutreachChannel }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+            </div>
+            <div>
+              <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">KIND</div>
+              <select value="{{ outreachForm.kind }}" onChange="{{ setOutreachKind }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+                <option value="Organic">Organic</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+            <sc-if value="{{ outreachIsPaid }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">BUDGET</div>
+                <input value="{{ outreachForm.budget }}" onChange="{{ setOutreachBudget }}" placeholder="$" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">CAMPAIGN</div>
+                <input value="{{ outreachForm.campaign }}" onChange="{{ setOutreachCampaign }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+            </sc-if>
+            <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 18px;border-radius:7px;cursor:pointer;width:fit-content" onClick="{{ addOutreachContact }}">Add</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isReminders }}" hint-placeholder-val="{{ false }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">Reminders</div>
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:560px">
+          <sc-for list="{{ reminders }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:9px;opacity:{{ r.opacity }}">
+              <div style="width:16px;height:16px;border-radius:4px;border:2px solid {{ r.boxColor }};background:{{ r.boxBg }};flex-shrink:0;cursor:pointer;overflow:hidden" onClick="{{ r.toggle }}"></div>
+              <span style="font:500 13px 'Inter';color:{{ t.text }};flex:1;text-decoration:{{ r.strike }}">{{ r.title }}</span>
+              <span style="font:600 10.5px 'Inter';color:{{ r.priorityColor }};background:{{ t.accentSoft }};border-radius:20px;padding:3px 10px">{{ r.priority }}</span>
+              <span style="font:500 11px 'Inter';color:{{ t.textFaint }};width:56px;text-align:right">{{ r.due }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFeed }}" hint-placeholder-val="{{ false }}">
+        <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">Team Feed</div>
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:600px">
+          <sc-for list="{{ feed }}" as="p" hint-placeholder-count="3">
+            <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;padding:14px;transition:box-shadow .15s" style-hover="box-shadow:0 6px 18px rgba(0,0,0,.06)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:30px;height:30px;border-radius:50%;background:{{ p.colorMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 11px 'Inter';display:flex;align-items:center;justify-content:center">{{ p.initials }}</span>
+                <div>
+                  <div style="font:700 12.5px 'Inter';color:{{ t.text }}">{{ p.name }}</div>
+                  <div style="font:500 10.5px 'Inter';color:{{ t.textFaint }}">{{ p.time }}</div>
+                </div>
+              </div>
+              <div style="font:400 13px/1.5 'Inter';color:{{ t.text }};margin-top:10px">{{ p.text }}</div>
+              <div style="display:flex;gap:14px;margin-top:10px">
+                <span style="font:600 11px 'Inter';color:{{ t.textDim }}">♥ {{ p.likes }}</span>
+                <span style="font:600 11px 'Inter';color:{{ t.textDim }}">💬 {{ p.comments }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInvites }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ inviteIsList }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+            <div style="font:800 22px 'Sora';color:{{ t.text }}">Invites</div>
+            <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 16px;border-radius:7px;cursor:pointer;transition:transform .12s,box-shadow .12s" style-hover="transform:translateY(-1px);box-shadow:0 6px 16px {{ t.accentGlow }}" onClick="{{ openInviteForm }}">New Invite Link</div>
+          </div>
+          <div style="background:{{ t.card }};border:1px solid {{ t.cardBorder }};border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:1.6fr 0.8fr 0.8fr 1fr 1fr;padding:10px 16px;border-bottom:1px solid {{ t.border }};font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em">
+              <span>LINK</span><span>ROLE</span><span>LIMIT</span><span>EXPIRES</span><span>STATUS</span>
+            </div>
+            <sc-for list="{{ invites }}" as="inv" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:1.6fr 0.8fr 0.8fr 1fr 1fr;padding:11px 16px;border-bottom:1px solid {{ t.border }};font:500 12.5px 'Inter';color:{{ t.text }};align-items:center">
+                <span style="color:{{ t.accentBright }};font-weight:700">{{ inv.link }}</span><span style="color:{{ t.textDim }}">{{ inv.role }}</span><span style="color:{{ t.textDim }}">{{ inv.limit }}</span><span style="color:{{ t.textDim }}">{{ inv.expires }}</span>
+                <span><span style="font:600 10.5px 'Inter';color:{{ inv.statusColor }};background:{{ t.accentSoft }};border-radius:20px;padding:3px 10px">{{ inv.status }}</span></span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ inviteIsForm }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:420px">
+            <div style="font:800 22px 'Sora';color:{{ t.text }};margin-bottom:16px">New Invite Link</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">ROLE</div>
+                <select value="{{ inviteRole }}" onChange="{{ setInviteRole }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+                  <option value="Viewer">Viewer</option>
+                  <option value="Editor">Editor</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">FORWARD LIMIT</div>
+                <input type="number" min="1" value="{{ inviteLimit }}" onChange="{{ setInviteLimit }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+              <div>
+                <div style="font:700 10.5px 'Inter';color:{{ t.textFaint }};letter-spacing:.04em;margin-bottom:5px">EXPIRES</div>
+                <input value="{{ inviteExpires }}" onChange="{{ setInviteExpires }}" style="width:100%;padding:9px 11px;border:1px solid {{ t.border }};border-radius:7px;background:{{ t.card }};color:{{ t.text }};font-size:13px">
+              </div>
+              <div style="display:flex;gap:10px;margin-top:6px">
+                <div style="background:{{ t.accentMetal }};color:{{ t.onAccentMetal }};text-shadow:{{ t.metalTextShadow }};font:700 12px 'Inter';padding:9px 18px;border-radius:7px;cursor:pointer" onClick="{{ createInvite }}">Create invite link</div>
+                <div style="font:700 12px 'Inter';color:{{ t.textDim }};padding:9px 6px;cursor:pointer" onClick="{{ closeInviteForm }}">Cancel</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+class Component extends DCLogic {
+  state = {
+    view: 'app',
+    mode: 'dark',
+    page: 'dashboard',
+    docQuery: '',
+    currentFolderId: null,
+    openDocumentId: null,
+    docStatus: 'connecting',
+    newFolderName: '',
+    folders: [
+      { id: 'f1', name: 'Client Contracts' },
+      { id: 'f2', name: 'Templates' },
+    ],
+    documents: [
+      { id: 'd1', name: 'MSA — Northfield Co.', type: 'PDF', owner: 'Priya N.', modified: 'Sep 8', folderId: 'f1', body: 'MASTER SERVICE AGREEMENT\n\nThis agreement is entered into between Synergeia and Northfield Co., effective as of the signature date below...' },
+      { id: 'd2', name: 'Q3 Statement of Work.pdf', type: 'PDF', owner: 'Priya N.', modified: 'Sep 8', folderId: null, body: 'STATEMENT OF WORK — Q3\n\nScope: platform rebuild, phase one deliverables, and acceptance criteria...' },
+      { id: 'd3', name: 'Brand guidelines v3.fig', type: 'FIG', owner: 'Dana K.', modified: 'Sep 5', folderId: 'f2', body: 'Brand guidelines v3\n\nLogo usage, color palette, and typography rules...' },
+      { id: 'd4', name: 'Onboarding checklist.docx', type: 'DOCX', owner: 'Marcus D.', modified: 'Sep 2', folderId: 'f2', body: 'Onboarding checklist\n\n1. Provision accounts\n2. Share workspace invite\n3. Schedule kickoff call...' },
+      { id: 'd5', name: 'Vendor NDA template.pdf', type: 'PDF', owner: 'Jess T.', modified: 'Aug 29', folderId: 'f1', body: 'MUTUAL NON-DISCLOSURE AGREEMENT\n\nThis template covers standard confidentiality terms for vendor engagements...' },
+    ],
+    proposalView: 'list',
+    selectedProposalId: 'p2',
+    proposalForm: null,
+    proposals: [
+      { id: 'p1', title: 'Fernwood Retainer', client: 'Fernwood Studio', status: 'Accepted', value: '$18,000', date: 'Sep 1', assignee: 'Jess T.', description: 'Ongoing retainer covering monthly design and ops support for Fernwood Studio.' },
+      { id: 'p2', title: 'Northfield Platform Rebuild', client: 'Northfield Co.', status: 'In Review', value: '$64,500', date: 'Sep 6', assignee: 'Marcus D.', description: 'Full rebuild of the client portal and internal ops dashboard, migrating off the legacy stack in three phases.' },
+      { id: 'p3', title: 'Brightline Ops Audit', client: 'Brightline', status: 'Sent', value: '$9,200', date: 'Sep 8', assignee: 'Priya N.', description: 'Operational audit and workflow recommendations across the client\'s ops team.' },
+      { id: 'p4', title: 'Meridian Support Renewal', client: 'Meridian Co.', status: 'Draft', value: '$14,000', date: 'Sep 9', assignee: 'Dana K.', description: 'Renewal of the ongoing support and maintenance contract.' },
+    ],
+    inviteView: 'list',
+    inviteRole: 'Viewer',
+    inviteLimit: 5,
+    inviteExpires: 'Sep 30, 2026',
+    invites: [
+      { role: 'Editor', limit: 5, expires: 'Sep 20, 2026', status: 'Active', created: 'Sep 3', link: 'synergeia.app/i/8f2a1c' },
+      { role: 'Viewer', limit: 1, expires: 'Sep 15, 2026', status: 'Used', created: 'Aug 28', link: 'synergeia.app/i/b71e90' },
+      { role: 'Admin', limit: 1, expires: 'Sep 25, 2026', status: 'Active', created: 'Sep 6', link: 'synergeia.app/i/44dd02' },
+    ],
+    outreachForm: { name: '', channel: '', kind: 'Organic', budget: '', campaign: '' },
+    outreach: [
+      { contact: 'Alicia Ford', company: 'Northfield Co.', channel: 'Email', kind: 'Organic', stage: 'Replied', last: 'Sep 7' },
+      { contact: 'Ben Ostrow', company: 'Brightline', channel: 'LinkedIn Ads', kind: 'Paid', stage: 'Opened', last: 'Sep 6' },
+      { contact: 'Cara Whit', company: 'Meridian Co.', channel: 'Email', kind: 'Organic', stage: 'Sent', last: 'Sep 4' },
+      { contact: 'Deshawn Pratt', company: 'Fernwood Studio', channel: 'Referral', kind: 'Organic', stage: 'Replied', last: 'Sep 1' },
+    ],
+    reminders: [
+      { title: 'Follow up with Meridian Co.', due: 'Today', priority: 'High', done: false },
+      { title: 'Renew Ledger export cert', due: 'Tomorrow', priority: 'Medium', done: false },
+      { title: 'Send Q3 outreach recap', due: 'Sep 12', priority: 'Low', done: true },
+      { title: 'Approve new team invite', due: 'Sep 14', priority: 'Medium', done: false },
+    ],
+    authForm: { email: '', password: '', confirm: '' },
+    resetSent: false,
+  };
+
+  toggleMode = () => this.setState((s) => ({ mode: s.mode === 'dark' ? 'light' : 'dark' }));
+  goPage = (page) => this.setState({ page });
+  setDocQuery = (e) => this.setState({ docQuery: e.target.value });
+  toggleReminder = (i) => this.setState((s) => ({ reminders: s.reminders.map((r, idx) => (idx === i ? { ...r, done: !r.done } : r)) }));
+
+  goMarketing = () => this.setState({ view: 'marketing' });
+  goPricing = () => this.setState({ view: 'pricing' });
+  goSignin = () => this.setState({ view: 'signin' });
+  goSignup = () => this.setState({ view: 'signup' });
+  goReset = () => this.setState({ view: 'reset', resetSent: false });
+  signOut = () => this.setState({ view: 'marketing' });
+  setAuthEmail = (e) => this.setState((s) => ({ authForm: { ...s.authForm, email: e.target.value } }));
+  setAuthPassword = (e) => this.setState((s) => ({ authForm: { ...s.authForm, password: e.target.value } }));
+  setAuthConfirm = (e) => this.setState((s) => ({ authForm: { ...s.authForm, confirm: e.target.value } }));
+  submitAuth = () => this.setState({ view: 'app', page: 'dashboard', authForm: { email: '', password: '', confirm: '' } });
+  submitReset = () => this.setState({ resetSent: true });
+
+  openFolder = (id) => this.setState({ currentFolderId: id });
+  goUpFolder = () => this.setState({ currentFolderId: null });
+  openDocument = (id) => {
+    this.setState({ openDocumentId: id, docStatus: 'connecting' });
+    setTimeout(() => this.setState({ docStatus: 'connected' }), 900);
+  };
+  closeDocument = () => this.setState({ openDocumentId: null });
+  setNewFolderName = (e) => this.setState({ newFolderName: e.target.value });
+  addFolder = () => {
+    if (!this.state.newFolderName.trim()) return;
+    this.setState((s) => ({ folders: [...s.folders, { id: 'f' + Date.now(), name: s.newFolderName.trim() }], newFolderName: '' }));
+  };
+
+  newProposal = () => this.setState({ proposalView: 'new', proposalForm: { title: '', description: '', status: 'Draft', assignee: 'Jess T.', date: '' } });
+  openProposalDetail = (id) => this.setState({ proposalView: 'detail', selectedProposalId: id });
+  editProposal = () => {
+    const p = this.state.proposals.find((x) => x.id === this.state.selectedProposalId);
+    this.setState({ proposalView: 'edit', proposalForm: { ...p } });
+  };
+  backToProposalList = () => this.setState({ proposalView: 'list', proposalForm: null });
+  setProposalFormTitle = (e) => this.setState((s) => ({ proposalForm: { ...s.proposalForm, title: e.target.value } }));
+  setProposalFormDescription = (e) => this.setState((s) => ({ proposalForm: { ...s.proposalForm, description: e.target.value } }));
+  setProposalFormStatus = (e) => this.setState((s) => ({ proposalForm: { ...s.proposalForm, status: e.target.value } }));
+  setProposalFormAssignee = (e) => this.setState((s) => ({ proposalForm: { ...s.proposalForm, assignee: e.target.value } }));
+  setProposalFormDate = (e) => this.setState((s) => ({ proposalForm: { ...s.proposalForm, date: e.target.value } }));
+  saveProposalForm = () => {
+    const f = this.state.proposalForm;
+    if (!f || !f.title.trim()) return;
+    this.setState((s) => {
+      if (s.proposalView === 'edit') {
+        return { proposals: s.proposals.map((p) => (p.id === s.selectedProposalId ? { ...p, ...f } : p)), proposalView: 'detail', proposalForm: null };
+      }
+      const id = 'p' + Date.now();
+      return { proposals: [{ id, client: '—', value: 'TBD', ...f }, ...s.proposals], proposalView: 'detail', selectedProposalId: id, proposalForm: null };
+    });
+  };
+
+  openInviteForm = () => this.setState({ inviteView: 'new' });
+  closeInviteForm = () => this.setState({ inviteView: 'list' });
+  setInviteRole = (e) => this.setState({ inviteRole: e.target.value });
+  setInviteLimit = (e) => this.setState({ inviteLimit: e.target.value });
+  setInviteExpires = (e) => this.setState({ inviteExpires: e.target.value });
+  createInvite = () => {
+    this.setState((s) => ({
+      invites: [{ role: s.inviteRole, limit: s.inviteLimit, expires: s.inviteExpires, status: 'Active', created: 'Just now', link: 'synergeia.app/i/' + Math.random().toString(16).slice(2, 8) }, ...s.invites],
+      inviteView: 'list',
+    }));
+  };
+
+  setOutreachName = (e) => this.setState((s) => ({ outreachForm: { ...s.outreachForm, name: e.target.value } }));
+  setOutreachChannel = (e) => this.setState((s) => ({ outreachForm: { ...s.outreachForm, channel: e.target.value } }));
+  setOutreachKind = (e) => this.setState((s) => ({ outreachForm: { ...s.outreachForm, kind: e.target.value } }));
+  setOutreachBudget = (e) => this.setState((s) => ({ outreachForm: { ...s.outreachForm, budget: e.target.value } }));
+  setOutreachCampaign = (e) => this.setState((s) => ({ outreachForm: { ...s.outreachForm, campaign: e.target.value } }));
+  addOutreachContact = () => {
+    const f = this.state.outreachForm;
+    if (!f.name.trim()) return;
+    this.setState((s) => ({
+      outreach: [{ contact: f.name.trim(), company: '—', channel: f.channel || '—', kind: f.kind, stage: 'Sent', last: 'Just now' }, ...s.outreach],
+      outreachForm: { name: '', channel: '', kind: 'Organic', budget: '', campaign: '' },
+    }));
+  };
+
+  theme(mode) {
+    if (mode === 'dark') {
+      return {
+        bg: 'oklch(12% 0.006 280)',
+        bgGrad: 'radial-gradient(ellipse 900px 480px at 15% -10%, oklch(45% 0.15 295 / .2), transparent 60%)',
+        rail: 'oklch(14% 0.008 280)',
+        railBorder: 'oklch(24% 0.008 280)',
+        card: 'oklch(16% 0.008 280)',
+        cardBorder: 'oklch(25% 0.01 280)',
+        border: 'oklch(25% 0.01 280)',
+        text: 'oklch(95% 0.004 280)',
+        textDim: 'oklch(64% 0.01 280)',
+        textFaint: 'oklch(46% 0.01 280)',
+        accent: 'oklch(65% 0.22 295)',
+        accentBright: 'oklch(76% 0.17 295)',
+        accentGlow: 'oklch(65% 0.22 295 / .45)',
+        accentSoft: 'oklch(26% 0.09 295)',
+        surfaceBg: 'oklch(14% 0.008 280)',
+        surfaceBorder: 'oklch(24% 0.008 280)',
+        onAccent: 'oklch(14% 0.008 280)',
+        navAccent: 'oklch(65% 0.22 295)',
+        navActiveBg: 'oklch(26% 0.09 295)',
+        navActiveColor: 'oklch(76% 0.17 295)',
+        accentMetal: 'linear-gradient(180deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 45%), linear-gradient(135deg, oklch(35% 0.16 295) 0%, oklch(72% 0.11 288) 22%, oklch(42% 0.19 300) 45%, oklch(80% 0.08 280) 68%, oklch(38% 0.17 295) 100%)',
+        onAccentMetal: '#ffffff',
+        metalTextShadow: '-1px -1px 1px rgba(0,0,0,.55), 1px -1px 1px rgba(0,0,0,.55), -1px 1px 1px rgba(0,0,0,.55), 1px 1px 1px rgba(0,0,0,.55)',
+      };
+    }
+    return {
+      bg: 'oklch(97% 0.013 85)',
+      bgGrad: 'none',
+      rail: 'oklch(20% 0.05 150)',
+      surfaceBg: '#fffdf7',
+      surfaceBorder: 'oklch(89% 0.018 85)',
+      card: '#fffdf7',
+      cardBorder: 'oklch(89% 0.018 85)',
+      border: 'oklch(89% 0.018 85)',
+      text: 'oklch(25% 0.045 150)',
+      textDim: 'oklch(46% 0.03 130)',
+      textFaint: 'oklch(63% 0.018 90)',
+      accent: 'oklch(33% 0.075 150)',
+      accentBright: 'oklch(45% 0.09 150)',
+      accentGlow: 'oklch(45% 0.09 150 / .25)',
+      accentSoft: 'oklch(93% 0.035 140)',
+      onAccent: '#fdfbf4',
+      navAccent: 'oklch(60% 0.12 85)',
+      navActiveBg: 'oklch(97% 0.02 85)',
+      navActiveColor: 'oklch(33% 0.075 150)',
+      gold: 'oklch(60% 0.12 85)',
+      accentMetal: 'linear-gradient(180deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 45%), linear-gradient(135deg, oklch(26% 0.07 150) 0%, oklch(58% 0.09 145) 22%, oklch(22% 0.06 150) 45%, oklch(66% 0.08 100) 68%, oklch(28% 0.07 150) 100%)',
+      onAccentMetal: '#ffffff',
+      metalTextShadow: '-1px -1px 1px rgba(0,0,0,.55), 1px -1px 1px rgba(0,0,0,.55), -1px 1px 1px rgba(0,0,0,.55), 1px 1px 1px rgba(0,0,0,.55)',
+    };
+  }
+
+  renderVals() {
+    const mode = this.state.mode;
+    const dark = mode === 'dark';
+    const t = this.theme(mode);
+    const swatches = dark
+      ? ['oklch(65% 0.22 295)', 'oklch(70% 0.14 250)', 'oklch(76% 0.17 295)', 'oklch(55% 0.02 280)']
+      : ['oklch(36% 0.08 150)', 'oklch(52% 0.09 130)', 'oklch(56% 0.14 122)', 'oklch(50% 0.12 85)'];
+    const shine = dark ? 'linear-gradient(180deg, rgba(255,255,255,.25) 0%, rgba(255,255,255,0) 45%), ' : 'linear-gradient(180deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 45%), ';
+    const swatchesMetal = (dark
+      ? [
+          'linear-gradient(135deg, oklch(45% 0.19 295) 0%, oklch(76% 0.10 288) 25%, oklch(40% 0.20 300) 50%, oklch(78% 0.09 280) 75%, oklch(42% 0.18 295) 100%)',
+          'linear-gradient(135deg, oklch(48% 0.13 250) 0%, oklch(76% 0.08 240) 25%, oklch(42% 0.14 255) 50%, oklch(78% 0.07 235) 75%, oklch(45% 0.13 250) 100%)',
+          'linear-gradient(135deg, oklch(52% 0.16 295) 0%, oklch(80% 0.08 285) 25%, oklch(48% 0.17 300) 50%, oklch(82% 0.07 280) 75%, oklch(50% 0.16 295) 100%)',
+          'linear-gradient(135deg, oklch(38% 0.02 280) 0%, oklch(65% 0.01 280) 25%, oklch(33% 0.02 280) 50%, oklch(68% 0.01 280) 75%, oklch(36% 0.02 280) 100%)',
+        ]
+      : [
+          'linear-gradient(135deg, oklch(24% 0.08 150) 0%, oklch(58% 0.09 150) 25%, oklch(20% 0.07 150) 50%, oklch(60% 0.08 150) 75%, oklch(22% 0.07 150) 100%)',
+          'linear-gradient(135deg, oklch(34% 0.09 130) 0%, oklch(62% 0.08 130) 25%, oklch(28% 0.08 130) 50%, oklch(64% 0.07 130) 75%, oklch(30% 0.08 130) 100%)',
+          'linear-gradient(135deg, oklch(38% 0.14 122) 0%, oklch(64% 0.10 122) 25%, oklch(32% 0.13 122) 50%, oklch(66% 0.09 122) 75%, oklch(34% 0.13 122) 100%)',
+          'linear-gradient(135deg, oklch(32% 0.12 85) 0%, oklch(62% 0.10 85) 25%, oklch(26% 0.11 85) 50%, oklch(64% 0.09 85) 75%, oklch(28% 0.11 85) 100%)',
+        ]).map((g) => shine + g);
+    const silverMetal = shine + (dark
+      ? 'linear-gradient(135deg, oklch(45% 0.01 280) 0%, oklch(78% 0.005 280) 25%, oklch(40% 0.01 280) 50%, oklch(80% 0.005 280) 75%, oklch(42% 0.01 280) 100%)'
+      : 'linear-gradient(135deg, oklch(60% 0.01 85) 0%, oklch(88% 0.01 85) 25%, oklch(54% 0.01 85) 50%, oklch(90% 0.01 85) 75%, oklch(56% 0.01 85) 100%)');
+
+    const view = this.state.view;
+
+    const navDefs = [
+      ['dashboard', 'Dashboard'], ['documents', 'Documents'], ['proposals', 'Proposals'], ['calendar', 'Calendar'],
+      ['files', 'Shared Files'], ['ledger', 'Ledger'], ['project', 'Project Info'], ['outreach', 'Outreach'],
+      ['reminders', 'Reminders'], ['feed', 'Team Feed'], ['invites', 'Invites'],
+    ];
+    const navItems = navDefs.map(([key, label]) => {
+      const active = this.state.page === key;
+      return {
+        key, label, active,
+        bg: active ? t.navActiveBg : 'transparent',
+        hoverBg: active ? t.navActiveBg : t.accentSoft,
+        color: active ? t.navActiveColor : t.textDim,
+        borderColor: active ? t.navAccent : 'transparent',
+        weight: active ? 700 : 600,
+        go: () => this.goPage(key),
+      };
+    });
+
+    const stats = [
+      { label: 'Active Projects', value: '12' },
+      { label: 'Open Proposals', value: '5' },
+      { label: 'Unread Messages', value: '23' },
+      { label: 'Reminders Due', value: '4' },
+    ].map((s, i) => ({ ...s, color: swatches[i % swatches.length], colorMetal: swatchesMetal[i % swatchesMetal.length] }));
+
+    const activity = [
+      { who: 'Priya N.', action: 'uploaded Q3 Statement of Work.pdf', when: '12m ago' },
+      { who: 'Marcus D.', action: 'moved Fernwood Retainer to Accepted', when: '48m ago' },
+      { who: 'Dana K.', action: 'commented on the Northfield proposal', when: '2h ago' },
+      { who: 'System', action: 'synced 3 calendar events from Outlook', when: '4h ago' },
+    ];
+
+    const currentFolder = this.state.folders.find((f) => f.id === this.state.currentFolderId) || null;
+    const atRoot = !this.state.currentFolderId;
+    const docHeading = currentFolder ? currentFolder.name : 'Documents';
+    const folders = this.state.folders.map((f) => ({ ...f, open: () => this.openFolder(f.id) }));
+    const docsInFolder = this.state.documents.filter((d) => (d.folderId || null) === (this.state.currentFolderId || null));
+    const filteredDocuments = docsInFolder
+      .filter((d) => d.name.toLowerCase().includes(this.state.docQuery.toLowerCase()))
+      .map((d) => ({ ...d, open: () => this.openDocument(d.id) }));
+    const openDocument = this.state.openDocumentId ? this.state.documents.find((d) => d.id === this.state.openDocumentId) : null;
+    const isDocEditorOpen = !!openDocument;
+    const isDocList = !isDocEditorOpen;
+    const docStatusLabel = this.state.docStatus === 'connected' ? 'Live · 2 editing' : 'Connecting…';
+    const docStatusColor = this.state.docStatus === 'connected' ? swatches[0] : t.textFaint;
+
+    const team = [
+      { name: 'Jess T.', role: 'Founder' },
+      { name: 'Priya N.', role: 'Operations' },
+      { name: 'Marcus D.', role: 'Engineering' },
+      { name: 'Dana K.', role: 'Design' },
+    ];
+
+    const proposals = this.state.proposals.map((p, i) => ({ ...p, color: swatches[i % swatches.length], colorMetal: swatchesMetal[i % swatchesMetal.length], open: () => this.openProposalDetail(p.id) }));
+    const selectedProposal = this.state.proposals.find((p) => p.id === this.state.selectedProposalId) || { title: '', status: '', assignee: '', date: '', description: '' };
+    const proposalComments = [
+      { author: 'Priya N.', body: 'Sent the revised scope to their team yesterday.' },
+      { author: 'Marcus D.', body: 'Waiting on their legal review before we sign.' },
+    ];
+    const proposalIsList = this.state.proposalView === 'list';
+    const proposalIsDetail = this.state.proposalView === 'detail';
+    const proposalIsForm = this.state.proposalView === 'new' || this.state.proposalView === 'edit';
+    const proposalFormIsEdit = this.state.proposalView === 'edit';
+    const proposalFormHeading = proposalFormIsEdit ? 'Edit Proposal' : 'New Proposal';
+    const proposalForm = this.state.proposalForm || { title: '', description: '', status: 'Draft', assignee: '', date: '' };
+
+    const calendarBase = {
+      Mon: [{ title: 'Kickoff — Northfield', time: '10:00 AM' }],
+      Tue: [{ title: 'Design review', time: '2:00 PM' }],
+      Wed: [],
+      Thu: [{ title: 'Ledger close-out', time: '9:30 AM' }],
+      Fri: [{ title: 'Team retro', time: '4:00 PM' }],
+      Sat: [],
+      Sun: [],
+    };
+    const calendarCols = Object.keys(calendarBase).map((day) => ({ day, events: calendarBase[day] }));
+    const agenda = [
+      { title: 'Kickoff call — Northfield Co.', when: 'Mon · 10:00 – 10:45 AM' },
+      { title: 'Design review with Dana', when: 'Tue · 2:00 – 2:30 PM' },
+      { title: 'Ledger close-out', when: 'Thu · 9:30 – 10:00 AM' },
+      { title: 'Team retro', when: 'Fri · 4:00 – 4:30 PM' },
+    ];
+
+    const files = [
+      { name: 'Logo pack.zip', size: '4.2 MB', shared: 'Whole team' },
+      { name: 'Site photos', size: '128 MB', shared: '3 people' },
+      { name: 'Contracts 2026', size: '2.1 MB', shared: 'Admins only' },
+      { name: 'Press kit', size: '19 MB', shared: 'Whole team' },
+    ];
+
+    const ledgerRows = [
+      { date: 'Sep 8', desc: 'Northfield Co. — invoice #1042', category: 'Income', amount: 12500 },
+      { date: 'Sep 6', desc: 'Studio software renewal', category: 'Software', amount: -420 },
+      { date: 'Sep 3', desc: 'Fernwood Studio — retainer', category: 'Income', amount: 6000 },
+      { date: 'Aug 30', desc: 'Contractor — Dana K.', category: 'Payroll', amount: -3200 },
+      { date: 'Aug 27', desc: 'Office supplies', category: 'Ops', amount: -180 },
+    ];
+    const fmt = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString();
+    let running = 0;
+    const ledger = ledgerRows.map((r) => {
+      running += r.amount;
+      return { ...r, amountLabel: fmt(r.amount), amountColor: r.amount > 0 ? swatches[0] : t.textDim, balanceLabel: fmt(running) };
+    });
+    const ledgerBalanceLabel = fmt(running);
+
+    const projectFields = {
+      name: 'Northfield Platform Rebuild',
+      client: 'Northfield Co.',
+      status: 'In Progress',
+      start: 'Aug 18, 2026',
+      due: 'Nov 6, 2026',
+      description: 'Full rebuild of the client portal and internal ops dashboard, migrating off the legacy stack in three phases.',
+    };
+
+    const outreachIsPaid = this.state.outreachForm.kind === 'Paid';
+    const outreach = this.state.outreach.map((o, i) => ({ ...o, color: swatches[i % swatches.length] }));
+
+    const priorityColor = (p) => ({ High: swatches[0], Medium: swatches[3], Low: t.textDim }[p] || t.textDim);
+    const reminders = this.state.reminders.map((r, i) => ({
+      ...r,
+      opacity: r.done ? 0.55 : 1,
+      strike: r.done ? 'line-through' : 'none',
+      boxColor: r.done ? swatches[0] : t.border,
+      boxBg: r.done ? swatchesMetal[0] : 'transparent',
+      priorityColor: priorityColor(r.priority),
+      toggle: () => this.toggleReminder(i),
+    }));
+
+    const feed = [
+      { name: 'Priya N.', initials: 'PN', time: '1h ago', text: 'Shipped the new onboarding checklist — feedback welcome.', likes: 4, comments: 2 },
+      { name: 'Marcus D.', initials: 'MD', time: '3h ago', text: 'Northfield kickoff went great, notes are in Docs.', likes: 6, comments: 1 },
+      { name: 'Dana K.', initials: 'DK', time: 'Yesterday', text: 'Brand guidelines v3 is up for review before Friday.', likes: 3, comments: 0 },
+    ].map((f, i) => ({ ...f, color: swatches[i % swatches.length], colorMetal: swatchesMetal[i % swatchesMetal.length] }));
+
+    const statusColor = (s) => ({ Active: swatches[0], Used: t.textDim, Expired: swatches[3] }[s] || t.textDim);
+    const invites = this.state.invites.map((inv) => ({ ...inv, statusColor: statusColor(inv.status) }));
+    const inviteIsList = this.state.inviteView === 'list';
+    const inviteIsForm = this.state.inviteView === 'new';
+
+    const plans = [
+      { name: 'STARTER', price: '$12', blurb: 'For small teams getting started with shared documents and proposals.' },
+      { name: 'TEAM', price: '$28', blurb: 'The full collaboration suite — calendar, ledger, and outreach included.' },
+      { name: 'BUSINESS', price: '$54', blurb: 'Advanced permissions, priority support, and audit logs.' },
+    ];
+
+    const page = this.state.page;
+    return {
+      mode, t, dark, silverMetal,
+      view,
+      isMarketing: view === 'marketing',
+      isPricing: view === 'pricing',
+      isSignin: view === 'signin',
+      isSignup: view === 'signup',
+      isReset: view === 'reset',
+      isApp: view === 'app',
+      plans,
+      goMarketing: this.goMarketing, goPricing: this.goPricing, goSignin: this.goSignin, goSignup: this.goSignup, goReset: this.goReset, signOut: this.signOut,
+      authForm: this.state.authForm, setAuthEmail: this.setAuthEmail, setAuthPassword: this.setAuthPassword, setAuthConfirm: this.setAuthConfirm, submitAuth: this.submitAuth,
+      resetSent: this.state.resetSent, resetNotSent: !this.state.resetSent, submitReset: this.submitReset,
+      modeLabel: dark ? 'Dark' : 'Light',
+      knobLeft: dark ? '19px' : '2px',
+      toggleMode: this.toggleMode,
+      navItems,
+      isDashboard: page === 'dashboard',
+      isDocuments: page === 'documents',
+      isProposals: page === 'proposals',
+      isCalendar: page === 'calendar',
+      isFiles: page === 'files',
+      isLedger: page === 'ledger',
+      isProject: page === 'project',
+      isOutreach: page === 'outreach',
+      isReminders: page === 'reminders',
+      isFeed: page === 'feed',
+      isInvites: page === 'invites',
+      stats, activity,
+      docQuery: this.state.docQuery, setDocQuery: this.setDocQuery,
+      currentFolder, atRoot, docHeading, folders, filteredDocuments,
+      isDocEditorOpen, isDocList, openDocument, docStatusLabel, docStatusColor,
+      newFolderName: this.state.newFolderName, setNewFolderName: this.setNewFolderName, addFolder: this.addFolder,
+      closeDocument: this.closeDocument,
+      proposals, selectedProposal, proposalComments,
+      proposalIsList, proposalIsDetail, proposalIsForm, proposalFormIsEdit, proposalFormHeading, proposalForm,
+      newProposal: this.newProposal, editProposal: this.editProposal, backToProposalList: this.backToProposalList,
+      setProposalFormTitle: this.setProposalFormTitle, setProposalFormDescription: this.setProposalFormDescription,
+      setProposalFormStatus: this.setProposalFormStatus, setProposalFormAssignee: this.setProposalFormAssignee,
+      setProposalFormDate: this.setProposalFormDate, saveProposalForm: this.saveProposalForm,
+      calendarCols, agenda,
+      files,
+      ledger, ledgerBalanceLabel,
+      projectFields, team,
+      outreach, outreachForm: this.state.outreachForm, outreachIsPaid,
+      setOutreachName: this.setOutreachName, setOutreachChannel: this.setOutreachChannel, setOutreachKind: this.setOutreachKind,
+      setOutreachBudget: this.setOutreachBudget, setOutreachCampaign: this.setOutreachCampaign, addOutreachContact: this.addOutreachContact,
+      reminders,
+      feed,
+      invites, inviteIsList, inviteIsForm,
+      inviteRole: this.state.inviteRole, setInviteRole: this.setInviteRole,
+      inviteLimit: this.state.inviteLimit, setInviteLimit: this.setInviteLimit,
+      inviteExpires: this.state.inviteExpires, setInviteExpires: this.setInviteExpires,
+      openInviteForm: this.openInviteForm, closeInviteForm: this.closeInviteForm, createInvite: this.createInvite,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

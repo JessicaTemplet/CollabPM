@@ -1,6 +1,9 @@
 <h1>Ledger</h1>
 
-<p>Outstanding balance: $<%= "%.2f" % (@balance_cents / 100.0) %></p>
+<div class="card" style="max-width:280px;margin-bottom:22px">
+  <div class="stat-label">Outstanding balance</div>
+  <div class="stat-value">$<%= "%.2f" % (@balance_cents / 100.0) %></div>
+</div>
 
 <table>
   <thead>
@@ -10,7 +13,7 @@
     <% @entries.each do |entry| %>
       <tr>
         <td><%= entry.created_at.strftime("%b %-d, %Y") %></td>
-        <td><%= entry.entry_type.titleize %></td>
+        <td><span class="badge badge-tone-<%= entry.entry_type == "payment" ? "negative" : "positive" %>"><%= entry.entry_type.titleize %></span></td>
         <td><%= entry.method.titleize %></td>
         <td>$<%= "%.2f" % (entry.amount_cents / 100.0) %></td>
         <td><%= entry.description %></td>

@@ -1,9 +1,14 @@
-<h1>Multi-tenant SaaS</h1>
-<p>A Google Docs–style shared workspace: real-time collaborative documents over
-   Action Cable with a hand-rolled CRDT, plus proposals, a shared calendar,
-   files, a ledger, and outreach tracking — all scoped per tenant with
-   row-level security in Postgres.</p>
-<p>This is a placeholder link for local dev — in production you wouldn't
-   know a visitor's tenant from the marketing site, so this would go to
-   a "find your workspace" or plan-selection flow instead.</p>
-<p><%= link_to "Sign in (acme demo tenant) →", new_session_url(subdomain: "acme"), class: "btn" %></p>
+<div class="marketing-hero">
+  <h1>Real-time collaboration for client-facing teams.</h1>
+  <p>A Google Docs–style shared workspace: real-time collaborative documents over
+     Action Cable with a hand-rolled CRDT, plus proposals, a shared calendar,
+     files, a ledger, and outreach tracking — all scoped per tenant with
+     row-level security in Postgres.</p>
+  <p class="empty-note">This is a placeholder link for local dev — in production you wouldn't
+     know a visitor's tenant from the marketing site, so this would go to
+     a "find your workspace" or plan-selection flow instead.</p>
+  <div class="marketing-actions">
+    <%= link_to "Sign in (acme demo tenant)", new_session_url(subdomain: "acme"), class: "btn" %>
+    <%= link_to "See pricing", pricing_path, class: "btn btn-quiet" %>
+  </div>
+</div>

@@ -1,15 +1,20 @@
-<h1>Project info</h1>
+<h1>Project Info</h1>
 
 <% ProjectInfoItem::KINDS.each do |kind| %>
   <h2><%= kind.titleize %></h2>
-  <ul>
-    <% @items_by_kind[kind].each do |item| %>
-      <li>
-        <%= item.name %>
-        <%= button_to "Remove", project_info_item_path(item), method: :delete, form: { style: "display:inline" } %>
-      </li>
-    <% end %>
-  </ul>
+  <% if @items_by_kind[kind].any? %>
+    <div class="tile-grid">
+      <% @items_by_kind[kind].each do |item| %>
+        <div class="card tile">
+          <span class="swatch"></span>
+          <span class="name"><%= item.name %></span>
+          <%= button_to "Remove", project_info_item_path(item), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="empty-note">None yet.</p>
+  <% end %>
 <% end %>
 
 <h2>Add item</h2>

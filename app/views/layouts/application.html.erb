@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "SaaS Tenant" %></title>
+    <title><%= content_for(:title) || "Synergeia" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="SaaS Tenant">
+    <meta name="application-name" content="Synergeia">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <script>
+      // Set the theme attribute before first paint so there's no flash of
+      // the wrong theme. Persisted client-side (cookie) since this is a
+      // server-rendered app, not a SPA with its own state store.
+      (function () {
+        var m = document.cookie.match(/(?:^|; )theme=([^;]*)/);
+        document.documentElement.dataset.theme = m ? decodeURIComponent(m[1]) : "dark";
+      })();
+    </script>
 
     <%= yield :head %>
 
@@ -18,17 +28,54 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= render "layouts/nav" %>
-    <div class="page">
-      <% if notice %><p class="flash notice"><%= notice %></p><% end %>
-      <% if alert %><p class="flash alert"><%= alert %></p><% end %>
-      <%= yield %>
-    </div>
+    <% if authenticated? && Current.tenant %>
+      <div class="app-shell">
+        <header class="app-topbar">
+          <div class="brand">
+            <span class="mark">S</span>
+            <span class="wordmark">SYNERGEIA</span>
+            <span class="tenant"><%= Current.tenant.name %></span>
+          </div>
+          <%= button_to "Sign out", session_path, method: :delete, class: "btn" %>
+        </header>
+        <div class="app-body">
+          <%= render "layouts/nav" %>
+          <main class="app-main">
+            <% if notice %><p class="flash notice"><%= notice %></p><% end %>
+            <% if alert %><p class="flash alert"><%= alert %></p><% end %>
+            <%= yield %>
+          </main>
+        </div>
+      </div>
+    <% else %>
+      <div class="public-shell">
+        <header class="public-topbar">
+          <%= link_to "/", class: "brand" do %>
+            <span class="mark">S</span><span class="wordmark">SYNERGEIA</span>
+          <% end %>
+        </header>
+        <main class="public-main">
+          <% if notice %><p class="flash notice"><%= notice %></p><% end %>
+          <% if alert %><p class="flash alert"><%= alert %></p><% end %>
+          <%= yield %>
+        </main>
+      </div>
+    <% end %>
+
+    <script>
+      function toggleTheme() {
+        var html = document.documentElement;
+        var next = html.dataset.theme === "dark" ? "light" : "dark";
+        html.dataset.theme = next;
+        document.cookie = "theme=" + next + "; path=/; max-age=31536000; samesite=lax";
+      }
+    </script>
   </body>
 </html>

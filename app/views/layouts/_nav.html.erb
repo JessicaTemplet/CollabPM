@@ -1,13 +1,23 @@
-<% if authenticated? && Current.tenant %>
-  <nav class="topnav">
-    <div class="brand">
-      <span class="mark">C</span>
-      CollabPM <span class="tenant">· <%= Current.tenant.name %></span>
-    </div>
-    <div class="actions">
-      <%= link_to "Dashboard", dashboard_path %>
-      <span><%= Current.user.email_address %></span>
-      <%= button_to "Sign out", session_path, method: :delete %>
-    </div>
-  </nav>
-<% end %>
+<nav class="app-sidebar">
+  <div class="sidebar-nav">
+    <%= link_to "Dashboard", dashboard_path, class: "sidebar-link#{' is-active' if controller_name == 'dashboard'}" %>
+    <%= link_to "Documents", documents_path, class: "sidebar-link#{' is-active' if controller_name == 'documents'}" %>
+    <%= link_to "Proposals", proposals_path, class: "sidebar-link#{' is-active' if controller_name == 'proposals'}" %>
+    <%= link_to "Calendar", events_path, class: "sidebar-link#{' is-active' if controller_name == 'events'}" %>
+    <%= link_to "Shared Files", files_path, class: "sidebar-link#{' is-active' if controller_name == 'files'}" %>
+    <%= link_to "Ledger", ledger_entries_path, class: "sidebar-link#{' is-active' if controller_name == 'ledger_entries'}" %>
+    <%= link_to "Project Info", project_info_items_path, class: "sidebar-link#{' is-active' if controller_name == 'project_info_items'}" %>
+    <%= link_to "Outreach", outreach_contacts_path, class: "sidebar-link#{' is-active' if controller_name == 'outreach_contacts'}" %>
+    <%= link_to "Reminders", reminders_path, class: "sidebar-link#{' is-active' if controller_name == 'reminders'}" %>
+    <%= link_to "Team Feed", messages_path, class: "sidebar-link#{' is-active' if controller_name == 'messages'}" %>
+    <% if Current.user.role.in?(%w[owner admin]) %>
+      <%= link_to "Invites", invites_path, class: "sidebar-link#{' is-active' if controller_name == 'invites'}" %>
+    <% end %>
+  </div>
+  <div class="sidebar-toggle" onclick="toggleTheme()">
+    <span class="toggle-label">
+      <span class="label-dark">Dark mode</span><span class="label-light">Light mode</span>
+    </span>
+    <span class="toggle-switch"><span class="toggle-knob"></span></span>
+  </div>
+</nav>

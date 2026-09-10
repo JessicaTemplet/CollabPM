@@ -22,8 +22,8 @@ RSpec.describe "Invites", type: :request do
       get invites_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("member").and include("admin")
-      expect(response.body).to include("redeemed")
+      expect(response.body).to include("Member").and include("Admin")
+      expect(response.body).to include("Redeemed")
       expect(response.body).to match(%r{registration/new\?invite_token=\S+})
     end
 

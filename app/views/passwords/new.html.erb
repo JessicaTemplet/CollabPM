@@ -1,7 +1,15 @@
-<h1>Reset your password</h1>
+<div class="auth-shell">
+  <div class="auth-card">
+    <h1>Reset your password</h1>
 
-<%= form_with url: password_path do |f| %>
-  <%= f.label :email_address %>
-  <%= f.email_field :email_address %>
-  <%= f.submit "Email reset instructions" %>
-<% end %>
+    <%= form_with url: password_path do |f| %>
+      <%= f.label :email_address %>
+      <%= f.email_field :email_address %>
+      <%= f.submit "Email reset instructions" %>
+    <% end %>
+
+    <div class="auth-links">
+      <%= link_to "← Back to sign in", new_session_path %>
+    </div>
+  </div>
+</div>

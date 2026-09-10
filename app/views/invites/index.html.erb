@@ -1,6 +1,6 @@
 <h1>Invites</h1>
 
-<p><%= link_to "New invite", new_invite_path %></p>
+<p><%= link_to "New invite", new_invite_path, class: "btn" %></p>
 
 <table>
   <thead>
@@ -14,22 +14,19 @@
   </thead>
   <tbody>
     <% @invites.each do |invite| %>
+      <% status = invite.used_at ? "redeemed" : (invite.expired? ? "expired" : "active") %>
       <tr>
-        <td><%= invite.role %></td>
+        <td><%= invite.role.titleize %></td>
         <td>
-          <% if invite.used_at %>
-            redeemed <%= time_ago_in_words(invite.used_at) %> ago
-          <% elsif invite.expired? %>
-            expired
-          <% else %>
-            active
-          <% end %>
+          <span class="badge badge-tone-<%= status_tone(status) %>">
+            <%= status == "redeemed" ? "Redeemed #{time_ago_in_words(invite.used_at)} ago" : status.titleize %>
+          </span>
         </td>
         <td><%= invite.forward_log.size %> / <%= invite.generation_limit %></td>
         <td><%= invite.expires_at.strftime("%b %-d, %Y %H:%M") %></td>
         <td>
           <% if invite.usable_at_generation?(0) %>
-            <%= link_to "Copy link", new_registration_url(invite_token: invite.token) %>
+            <%= link_to "Copy link", new_registration_url(invite_token: invite.token), class: "btn-quiet" %>
           <% end %>
         </td>
       </tr>

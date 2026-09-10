@@ -1,4 +1,4 @@
-<h1>Team feed</h1>
+<h1>Team Feed</h1>
 
 <%= form_with model: Comment.new, url: messages_path do |f| %>
   <%= f.label :body, "Post an update" %>
@@ -6,12 +6,19 @@
   <%= f.submit "Post" %>
 <% end %>
 
-<ul>
+<% if @messages.any? %>
   <% @messages.each do |message| %>
-    <li>
-      <strong><%= message.author.email_address %></strong>
-      &mdash; <%= time_ago_in_words(message.created_at) %> ago<br>
-      <%= message.body %>
-    </li>
+    <div class="card feed-card">
+      <div class="feed-head">
+        <span class="avatar"><%= message.author.email_address.first.upcase %></span>
+        <div>
+          <div class="name"><%= message.author.email_address %></div>
+          <div class="when"><%= time_ago_in_words(message.created_at) %> ago</div>
+        </div>
+      </div>
+      <div class="feed-body"><%= message.body %></div>
+    </div>
   <% end %>
-</ul>
+<% else %>
+  <p class="empty-note">No posts yet.</p>
+<% end %>

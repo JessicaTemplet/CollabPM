@@ -1,16 +1,25 @@
-<h1>Create your account</h1>
+<div class="auth-shell">
+  <div class="auth-card">
+    <h1>Create your account</h1>
+    <p class="subtitle">Join <%= Current.tenant&.name || request.subdomain %>.</p>
 
-<%= form_with model: @user, url: registration_path do |f| %>
-  <%= hidden_field_tag :invite_token, params[:invite_token] %>
+    <%= form_with model: @user, url: registration_path do |f| %>
+      <%= hidden_field_tag :invite_token, params[:invite_token] %>
 
-  <%= f.label :email_address %>
-  <%= f.email_field :email_address, autofocus: true %>
+      <%= f.label :email_address %>
+      <%= f.email_field :email_address, autofocus: true %>
 
-  <%= f.label :password %>
-  <%= f.password_field :password %>
+      <%= f.label :password %>
+      <%= f.password_field :password %>
 
-  <%= f.label :password_confirmation %>
-  <%= f.password_field :password_confirmation %>
+      <%= f.label :password_confirmation %>
+      <%= f.password_field :password_confirmation %>
 
-  <%= f.submit "Sign up" %>
-<% end %>
+      <%= f.submit "Sign up" %>
+    <% end %>
+
+    <div class="auth-links">
+      <%= link_to "Already have an account? Sign in", new_session_path %>
+    </div>
+  </div>
+</div>

@@ -1,14 +1,20 @@
-<h1>Shared files</h1>
+<h1>Shared Files</h1>
 
-<ul>
-  <% @files.each do |file| %>
-    <li>
-      <%= link_to file.filename.to_s, rails_blob_path(file, disposition: "attachment") %>
-      <%= button_to "Remove", file_path(file), method: :delete, form: { style: "display:inline" } %>
-    </li>
-  <% end %>
-</ul>
+<% if @files.any? %>
+  <div class="tile-grid">
+    <% @files.each do |file| %>
+      <div class="card tile">
+        <span class="swatch"></span>
+        <span class="name"><%= link_to file.filename.to_s, rails_blob_path(file, disposition: "attachment") %></span>
+        <%= button_to "Remove", file_path(file), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">No files uploaded yet.</p>
+<% end %>
 
+<h2>Upload</h2>
 <%= form_with url: files_path, method: :post, multipart: true do |f| %>
   <%= f.file_field :file %>
   <%= f.submit "Upload" %>

@@ -1,18 +1,25 @@
 <h1><%= @proposal.title %></h1>
 
 <p>
-  Status: <%= @proposal.status.titleize %> &middot;
-  Assignee: <%= @proposal.assignee&.email_address || "Unassigned" %>
+  <span class="badge badge-tone-<%= status_tone(@proposal.status) %>"><%= @proposal.status.titleize %></span>
+  &middot; Assignee: <%= @proposal.assignee&.email_address || "Unassigned" %>
   <% if @proposal.due_date %> &middot; Due <%= @proposal.due_date.strftime("%b %-d, %Y") %><% end %>
 </p>
 
 <p><%= @proposal.description %></p>
 
-<p><%= link_to "Edit", edit_proposal_path(@proposal) %></p>
+<p><%= link_to "Edit", edit_proposal_path(@proposal), class: "btn-quiet" %></p>
 
 <h2>Comments</h2>
-<ul>
-  <% @proposal.comments.order(:created_at).each do |comment| %>
-    <li><strong><%= comment.author.email_address %>:</strong> <%= comment.body %></li>
-  <% end %>
-</ul>
+<% if @proposal.comments.any? %>
+  <div class="activity-list">
+    <% @proposal.comments.order(:created_at).each do |comment| %>
+      <div class="card activity-row">
+        <span class="who"><%= comment.author.email_address %></span>
+        <span class="action"><%= comment.body %></span>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">No comments yet.</p>
+<% end %>

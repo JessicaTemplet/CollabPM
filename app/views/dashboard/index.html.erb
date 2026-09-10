@@ -1,17 +1,36 @@
 <h1>Dashboard</h1>
 <p>Signed in as <%= Current.user.email_address %> at <%= Current.tenant.name %>.</p>
 
-<ul class="nav-grid">
-  <li><%= link_to "📄 Documents", documents_path %></li>
-  <li><%= link_to "📋 Proposals", proposals_path %></li>
-  <li><%= link_to "📅 Calendar", events_path %></li>
-  <li><%= link_to "🗂 Shared files", files_path %></li>
-  <li><%= link_to "💰 Ledger", ledger_entries_path %></li>
-  <li><%= link_to "ℹ️ Project info", project_info_items_path %></li>
-  <li><%= link_to "📇 Outreach", outreach_contacts_path %></li>
-  <li><%= link_to "⏰ Reminders", reminders_path %></li>
-  <li><%= link_to "💬 Team feed", messages_path %></li>
-  <% if Current.user.role.in?(%w[owner admin]) %>
-    <li><%= link_to "✉️ Invites", invites_path %></li>
+<div class="stat-grid">
+  <% @stats.each do |stat| %>
+    <div class="card stat-card">
+      <div class="stat-value"><%= stat[:value] %></div>
+      <div class="stat-label"><%= stat[:label] %></div>
+    </div>
   <% end %>
-</ul>
+</div>
+
+<h2>Recent activity</h2>
+<% if @activity.any? %>
+  <div class="activity-list">
+    <% @activity.each do |entry| %>
+      <div class="card activity-row">
+        <span class="who"><%= entry.actor.email_address %></span>
+        <span class="action">
+          <% case entry.action %>
+          <% when "proposal.created" %>
+            created proposal <%= link_to entry.subject.title, entry.subject if entry.subject %>
+          <% when "proposal.status_changed" %>
+            moved <%= link_to entry.subject.title, entry.subject if entry.subject %>
+            from <%= entry.payload["from"] %> to <%= entry.payload["to"] %>
+          <% else %>
+            <%= entry.action.tr(".", " ") %>
+          <% end %>
+        </span>
+        <span class="when"><%= time_ago_in_words(entry.created_at) %> ago</span>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">Nothing yet.</p>
+<% end %>

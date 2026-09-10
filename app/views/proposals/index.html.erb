@@ -1,23 +1,22 @@
 <h1>Proposals</h1>
 
 <p>
-  <%= link_to "New proposal", new_proposal_path %>
-  |
-  <%= link_to "All", proposals_path %>
-  <%= link_to "My items", proposals_path(mine: 1) %>
+  <%= link_to "New proposal", new_proposal_path, class: "btn" %>
+  <%= link_to "All", proposals_path, class: "btn-quiet" %>
+  <%= link_to "My items", proposals_path(mine: 1), class: "btn-quiet" %>
 </p>
 
-<div style="display: flex; gap: 1rem;">
+<div class="kanban">
   <% Proposal::STATUSES.each do |status| %>
-    <div style="flex: 1; min-width: 0;">
+    <div class="kanban-col">
       <h2><%= status.titleize %></h2>
       <% @proposals_by_status[status].each do |proposal| %>
-        <div style="border: 1px solid var(--border); background: var(--panel); border-radius: 8px; padding: 0.6rem 0.7rem; margin-bottom: 0.5rem;">
-          <%= link_to proposal.title, proposal %><br>
-          <small style="color: var(--text-dim);">
+        <div class="card kanban-card">
+          <%= link_to proposal.title, proposal %>
+          <div class="meta">
             <%= proposal.assignee&.email_address || "Unassigned" %>
             <% if proposal.due_date %> &middot; due <%= proposal.due_date.strftime("%b %-d") %><% end %>
-          </small>
+          </div>
         </div>
       <% end %>
     </div>
