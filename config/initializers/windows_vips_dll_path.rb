@@ -22,7 +22,7 @@ if Gem.win_platform?
     ENV["VIPS_BIN_PATH"],
     File.expand_path("~/scoop/apps/libvips/current/bin"),
     *Dir["C:/ProgramData/chocolatey/lib/libvips/tools/vips-dev-*/bin"],
-    *Dir["C:/vips*/bin"],
+    *Dir["C:/vips*/bin"]
   ].compact
 
   vips_bin = vips_bin_candidates.find { |path| File.directory?(path) }

@@ -382,6 +382,21 @@ td{ padding: 10px; border-bottom: 1px solid var(--border-soft); font-size: 13px;
 .flash.notice{ background: var(--accent-dim); color: var(--accent-bright); }
 .flash.alert{ background: var(--danger-dim); color: var(--danger); }
 
+/* Project Info tiles: the swatch+name row stays a .tile like every
+ * other tile grid, but wraps a <details> so clicking the name expands
+ * an edit form below it. align-items is overridden to flex-start here
+ * (rather than .tile's default stretch) so the Remove button doesn't
+ * stretch to match the form's height once it's open. */
+.tile.info-tile{ align-items: flex-start; }
+.info-tile-disclosure{ flex: 1 1 auto; min-width: 0; }
+.info-tile-summary{ display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; }
+.info-tile-summary::-webkit-details-marker{ display: none; }
+.info-tile-body{ margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+.info-tile-form{ display: flex; flex-direction: column; gap: 2px; max-width: 220px; margin: 0; }
+.info-tile-form input{ font-size: 12px; padding: 5px 8px; margin: 0 0 8px; }
+.info-tile-form input[type="submit"]{ align-self: flex-start; font-size: 11.5px; padding: 5px 10px; margin: 2px 0 0; }
+.info-add-form{ max-width: 260px; }
+
 /* Ledger entry invoice/print view */
 .invoice{ background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 32px; max-width: 640px; }
 .invoice-head{ display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-soft); }

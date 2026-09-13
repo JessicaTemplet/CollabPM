@@ -32,6 +32,35 @@ RSpec.describe "Project info items", type: :request do
     Current.tenant = nil
   end
 
+  it "updates an item's name and details" do
+    Current.tenant = tenant
+    item = create(:project_info_item, tenant: tenant, created_by: owner, kind: "db_spec", name: "Main DB")
+    Current.tenant = nil
+
+    patch project_info_item_path(item), params: {
+      project_info_item: { name: "Primary DB", details: { service: "Neon", type: "postgres" } }
+    }
+
+    expect(response).to redirect_to(project_info_items_path)
+    Current.tenant = tenant
+    item.reload
+    expect(item.name).to eq("Primary DB")
+    expect(item.details).to eq("service" => "Neon", "type" => "postgres")
+    Current.tenant = nil
+  end
+
+  it "404s updating another tenant's item" do
+    other_tenant = create(:tenant, subdomain: "beta")
+    Current.tenant = other_tenant
+    other_owner = create(:user, tenant: other_tenant)
+    item = create(:project_info_item, tenant: other_tenant, created_by: other_owner)
+    Current.tenant = nil
+
+    patch project_info_item_path(item), params: { project_info_item: { name: "Hijacked" } }
+
+    expect(response).to have_http_status(:not_found)
+  end
+
   it "removes an item" do
     Current.tenant = tenant
     item = create(:project_info_item, tenant: tenant, created_by: owner)

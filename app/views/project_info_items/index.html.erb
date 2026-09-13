@@ -1,29 +1,124 @@
 <h1>Project Info</h1>
 
-<% ProjectInfoItem::KINDS.each do |kind| %>
-  <h2><%= kind.titleize %></h2>
-  <% if @items_by_kind[kind].any? %>
-    <div class="tile-grid">
-      <% @items_by_kind[kind].each do |item| %>
-        <div class="card tile">
-          <span class="swatch"></span>
-          <span class="name"><%= item.name %></span>
-          <%= button_to "Remove", project_info_item_path(item), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <p class="empty-note">None yet.</p>
-  <% end %>
+<h2>Subscriptions</h2>
+<% if @items_by_kind["subscription"].any? %>
+  <div class="tile-grid">
+    <% @items_by_kind["subscription"].each do |item| %>
+      <div class="card tile info-tile">
+        <details class="info-tile-disclosure">
+          <summary class="info-tile-summary">
+            <span class="swatch"></span>
+            <span class="name"><%= item.name %></span>
+          </summary>
+          <div class="info-tile-body">
+            <%= form_with model: item, url: project_info_item_path(item), method: :patch, class: "info-tile-form" do |f| %>
+              <%= f.label :name %>
+              <%= f.text_field :name %>
+              <label>Service</label>
+              <%= text_field_tag "project_info_item[details][service]", item.details["service"] %>
+              <label>Renews on</label>
+              <%= date_field_tag "project_info_item[details][renews_on]", item.details["renews_on"] %>
+              <%= f.submit "Save" %>
+            <% end %>
+          </div>
+        </details>
+        <%= button_to "Remove", project_info_item_path(item), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">None yet.</p>
 <% end %>
 
-<h2>Add item</h2>
-<%= form_with model: ProjectInfoItem.new, url: project_info_items_path do |f| %>
-  <%= f.label :kind %>
-  <%= f.select :kind, ProjectInfoItem::KINDS %>
-
-  <%= f.label :name %>
+<%= form_with model: ProjectInfoItem.new, url: project_info_items_path, class: "info-add-form" do |f| %>
+  <%= f.hidden_field :kind, value: "subscription" %>
+  <%= f.label :name, "New subscription" %>
   <%= f.text_field :name %>
+  <label>Service</label>
+  <%= text_field_tag "project_info_item[details][service]" %>
+  <label>Renews on</label>
+  <%= date_field_tag "project_info_item[details][renews_on]" %>
+  <%= f.submit "Add subscription" %>
+<% end %>
 
-  <%= f.submit "Add" %>
+<h2>Cloud Dependencies</h2>
+<% if @items_by_kind["cloud_dependency"].any? %>
+  <div class="tile-grid">
+    <% @items_by_kind["cloud_dependency"].each do |item| %>
+      <div class="card tile info-tile">
+        <details class="info-tile-disclosure">
+          <summary class="info-tile-summary">
+            <span class="swatch"></span>
+            <span class="name"><%= item.name %></span>
+          </summary>
+          <div class="info-tile-body">
+            <%= form_with model: item, url: project_info_item_path(item), method: :patch, class: "info-tile-form" do |f| %>
+              <%= f.label :name %>
+              <%= f.text_field :name %>
+              <label>Service</label>
+              <%= text_field_tag "project_info_item[details][service]", item.details["service"] %>
+              <label>Purpose</label>
+              <%= text_field_tag "project_info_item[details][purpose]", item.details["purpose"] %>
+              <%= f.submit "Save" %>
+            <% end %>
+          </div>
+        </details>
+        <%= button_to "Remove", project_info_item_path(item), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">None yet.</p>
+<% end %>
+
+<%= form_with model: ProjectInfoItem.new, url: project_info_items_path, class: "info-add-form" do |f| %>
+  <%= f.hidden_field :kind, value: "cloud_dependency" %>
+  <%= f.label :name, "New cloud dependency" %>
+  <%= f.text_field :name %>
+  <label>Service</label>
+  <%= text_field_tag "project_info_item[details][service]" %>
+  <label>Purpose</label>
+  <%= text_field_tag "project_info_item[details][purpose]" %>
+  <%= f.submit "Add cloud dependency" %>
+<% end %>
+
+<h2>DB Specs</h2>
+<% if @items_by_kind["db_spec"].any? %>
+  <div class="tile-grid">
+    <% @items_by_kind["db_spec"].each do |item| %>
+      <div class="card tile info-tile">
+        <details class="info-tile-disclosure">
+          <summary class="info-tile-summary">
+            <span class="swatch"></span>
+            <span class="name"><%= item.name %></span>
+          </summary>
+          <div class="info-tile-body">
+            <%= form_with model: item, url: project_info_item_path(item), method: :patch, class: "info-tile-form" do |f| %>
+              <%= f.label :name %>
+              <%= f.text_field :name %>
+              <label>Service</label>
+              <%= text_field_tag "project_info_item[details][service]", item.details["service"] %>
+              <label>Type</label>
+              <%= text_field_tag "project_info_item[details][type]", item.details["type"] %>
+              <%= f.submit "Save" %>
+            <% end %>
+          </div>
+        </details>
+        <%= button_to "Remove", project_info_item_path(item), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="empty-note">None yet.</p>
+<% end %>
+
+<%= form_with model: ProjectInfoItem.new, url: project_info_items_path, class: "info-add-form" do |f| %>
+  <%= f.hidden_field :kind, value: "db_spec" %>
+  <%= f.label :name, "New DB spec" %>
+  <%= f.text_field :name %>
+  <label>Service</label>
+  <%= text_field_tag "project_info_item[details][service]" %>
+  <label>Type</label>
+  <%= text_field_tag "project_info_item[details][type]" %>
+  <%= f.submit "Add DB spec" %>
 <% end %>

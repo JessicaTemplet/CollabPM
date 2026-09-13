@@ -52,7 +52,7 @@ RSpec.describe "Shared files", type: :request do
   it "recreates a dropped folder's structure as real nested folders" do
     post files_path, params: {
       file: [ upload, second_upload ],
-      relative_paths_json: [ "docs/sample.txt", "docs/nested/sample2.txt" ].to_json,
+      relative_paths_json: [ "docs/sample.txt", "docs/nested/sample2.txt" ].to_json
     }
 
     get files_path

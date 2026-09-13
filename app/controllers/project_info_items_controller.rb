@@ -17,6 +17,21 @@ class ProjectInfoItemsController < ApplicationController
     end
   end
 
+  def update
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant, the app's tenant-isolation boundary.
+    @item = Current.tenant.project_info_items.find(params[:id])
+
+    if @item.update(item_params)
+      redirect_to project_info_items_path, notice: "Updated."
+    else
+      # nosemgrep: ruby.rails.security.audit.xss.avoid-redirect.avoid-redirect
+      # Destination is the fixed project_info_items_path; only the alert
+      # text is dynamic (validation error messages).
+      redirect_to project_info_items_path, alert: @item.errors.full_messages.to_sentence
+    end
+  end
+
   def destroy
     # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
     # Scoped to Current.tenant, the app's tenant-isolation boundary.
