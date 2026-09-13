@@ -1,5 +1,18 @@
 <h1><%= @document.title %></h1>
 
+<p class="doc-actions">
+  <details class="rename-disclosure">
+    <summary class="btn-quiet">Rename</summary>
+    <%= form_with model: @document, url: document_path(@document), method: :patch, class: "rename-form" do |f| %>
+      <%= f.text_field :title %>
+      <%= f.submit "Save" %>
+    <% end %>
+  </details>
+  <%= button_to "Delete", document_path(@document), method: :delete,
+        class: "btn-quiet tile-remove",
+        form: { style: "display:inline", data: { turbo_confirm: "Delete this document?" } } %>
+</p>
+
 <div class="editor-panel" data-controller="document-editor" data-document-editor-document-id-value="<%= @document.id %>">
   <p>
     <span class="badge connecting" data-document-editor-target="status">Connecting…</span>

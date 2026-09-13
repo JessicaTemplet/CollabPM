@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_24_000015) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_13_060335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -116,6 +116,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_24_000015) do
     t.index ["tenant_id"], name: "index_events_on_tenant_id"
   end
 
+  create_table "file_folders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "parent_id"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_file_folders_on_parent_id"
+    t.index ["tenant_id", "parent_id"], name: "index_file_folders_on_tenant_id_and_parent_id"
+    t.index ["tenant_id"], name: "index_file_folders_on_tenant_id"
+  end
+
   create_table "folders", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
@@ -151,12 +162,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_24_000015) do
     t.text "description"
     t.string "entry_type", null: false
     t.string "method", null: false
-    t.bigint "subject_id"
-    t.string "subject_type"
     t.bigint "tenant_id", null: false
     t.index ["created_by_id"], name: "index_ledger_entries_on_created_by_id"
-    t.index ["subject_type", "subject_id"], name: "index_ledger_entries_on_subject"
-    t.index ["subject_type", "subject_id"], name: "index_ledger_entries_on_subject_type_and_subject_id"
     t.index ["tenant_id", "entry_type"], name: "index_ledger_entries_on_tenant_id_and_entry_type"
     t.index ["tenant_id"], name: "index_ledger_entries_on_tenant_id"
   end
@@ -248,6 +255,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_24_000015) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "shared_files", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "file_folder_id"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["file_folder_id"], name: "index_shared_files_on_file_folder_id"
+    t.index ["tenant_id"], name: "index_shared_files_on_tenant_id"
+  end
+
   create_table "taggings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "tag_id", null: false
@@ -313,6 +329,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_24_000015) do
   add_foreign_key "documents", "tenants"
   add_foreign_key "events", "tenants"
   add_foreign_key "events", "users", column: "created_by_id"
+  add_foreign_key "file_folders", "file_folders", column: "parent_id"
+  add_foreign_key "file_folders", "tenants"
   add_foreign_key "folders", "folders", column: "parent_id"
   add_foreign_key "folders", "tenants"
   add_foreign_key "invites", "tenants"
@@ -332,6 +350,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_24_000015) do
   add_foreign_key "reminders", "tenants"
   add_foreign_key "reminders", "users", column: "created_by_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "shared_files", "file_folders"
+  add_foreign_key "shared_files", "tenants"
   add_foreign_key "taggings", "tags"
   add_foreign_key "taggings", "tenants"
   add_foreign_key "tags", "tenants"

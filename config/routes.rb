@@ -21,12 +21,13 @@ Rails.application.routes.draw do
 
     get "dashboard", to: "dashboard#index"
 
-    resources :documents, only: [ :index, :show, :new, :create ]
-    resources :folders, only: [ :create ]
+    resources :documents, only: [ :index, :show, :new, :create, :update, :destroy ]
+    resources :folders, only: [ :create, :update, :destroy ]
     resources :proposals
     resources :events, only: [ :index, :create, :destroy ]
-    resources :files, only: [ :index, :create, :destroy ]
-    resources :ledger_entries, only: [ :index, :create ]
+    resources :files, only: [ :index, :create, :update, :destroy ]
+    resources :file_folders, only: [ :create, :update, :destroy ]
+    resources :ledger_entries, only: [ :index, :create, :show ]
     resources :project_info_items, only: [ :index, :create, :destroy ]
     resources :outreach_contacts, only: [ :index, :create, :update ]
     resources :reminders, only: [ :index, :create ]

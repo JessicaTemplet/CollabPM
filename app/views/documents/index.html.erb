@@ -7,22 +7,48 @@
 <% if @folders.any? %>
   <div class="tile-grid">
     <% @folders.each do |folder| %>
-      <%= link_to documents_path(folder_id: folder.id), class: "card tile" do %>
-        <span class="swatch"></span>
-        <span class="name"><%= folder.name %></span>
-      <% end %>
+      <div class="card tile">
+        <%= link_to documents_path(folder_id: folder.id), class: "tile-link" do %>
+          <span class="swatch"></span>
+          <span class="name"><%= folder.name %></span>
+        <% end %>
+        <div class="tile-actions">
+          <details class="rename-disclosure">
+            <summary class="btn-quiet">Rename</summary>
+            <%= form_with model: folder, url: folder_path(folder), method: :patch, class: "rename-form" do |f| %>
+              <%= f.text_field :name %>
+              <%= f.submit "Save" %>
+            <% end %>
+          </details>
+          <%= button_to "Delete", folder_path(folder), method: :delete,
+                class: "btn-quiet tile-remove",
+                form: { style: "display:inline", data: { turbo_confirm: "Delete this folder and everything inside it?" } } %>
+        </div>
+      </div>
     <% end %>
   </div>
 <% end %>
 
 <% if @documents.any? %>
   <table>
-    <thead><tr><th>Name</th><th>Created</th></tr></thead>
+    <thead><tr><th>Name</th><th>Created</th><th></th></tr></thead>
     <tbody>
       <% @documents.each do |document| %>
         <tr>
           <td><%= link_to document.title, document %></td>
           <td><%= document.created_at.strftime("%b %-d, %Y") %></td>
+          <td class="table-actions">
+            <details class="rename-disclosure">
+              <summary class="btn-quiet">Rename</summary>
+              <%= form_with model: document, url: document_path(document), method: :patch, class: "rename-form" do |f| %>
+                <%= f.text_field :title %>
+                <%= f.submit "Save" %>
+              <% end %>
+            </details>
+            <%= button_to "Delete", document_path(document), method: :delete,
+                  class: "btn-quiet tile-remove",
+                  form: { style: "display:inline", data: { turbo_confirm: "Delete this document?" } } %>
+          </td>
         </tr>
       <% end %>
     </tbody>

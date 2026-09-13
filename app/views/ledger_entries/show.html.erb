@@ -1,0 +1,37 @@
+<p class="doc-actions no-print">
+  <%= link_to "‹ Back to ledger", ledger_entries_path, class: "btn-quiet" %>
+  <button type="button" class="btn" onclick="window.print()">Print</button>
+</p>
+
+<div class="invoice">
+  <div class="invoice-head">
+    <div>
+      <div class="invoice-brand"><%= Current.tenant.name %></div>
+      <div class="invoice-meta-line">Recorded by <%= @entry.created_by.email_address %></div>
+    </div>
+    <div class="invoice-head-right">
+      <div class="invoice-title"><%= @entry.entry_type == "payment" ? "Payment" : "Invoice" %></div>
+      <div class="invoice-meta-line">#<%= @entry.id %></div>
+      <div class="invoice-meta-line"><%= @entry.created_at.strftime("%B %-d, %Y") %></div>
+    </div>
+  </div>
+
+  <table class="invoice-table">
+    <thead>
+      <tr><th>Description</th><th>Method</th><th class="invoice-amount">Amount</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= simple_format(@entry.description.presence || "None recorded.") %></td>
+        <td><%= @entry.method.titleize %></td>
+        <td class="invoice-amount">$<%= "%.2f" % (@entry.amount_cents / 100.0) %></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" class="invoice-total-label">Total</td>
+        <td class="invoice-amount invoice-total-value">$<%= "%.2f" % (@entry.amount_cents / 100.0) %></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

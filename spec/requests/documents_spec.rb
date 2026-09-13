@@ -39,4 +39,26 @@ RSpec.describe "Documents", type: :request do
 
     expect(response).to have_http_status(:not_found)
   end
+
+  it "404s renaming a document belonging to a different tenant" do
+    other_tenant = create(:tenant, subdomain: "beta")
+    Current.tenant = other_tenant
+    other_document = create(:document, tenant: other_tenant)
+    Current.tenant = nil
+
+    patch document_path(other_document), params: { document: { title: "Hijacked" } }
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it "404s deleting a document belonging to a different tenant" do
+    other_tenant = create(:tenant, subdomain: "beta")
+    Current.tenant = other_tenant
+    other_document = create(:document, tenant: other_tenant)
+    Current.tenant = nil
+
+    delete document_path(other_document)
+
+    expect(response).to have_http_status(:not_found)
+  end
 end

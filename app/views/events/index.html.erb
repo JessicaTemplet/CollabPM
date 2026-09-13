@@ -21,7 +21,15 @@
       <% week.each do |day| %>
         <div id="day-<%= day[:date].iso8601 %>"
              class="cal-day<%= " is-outside" unless day[:current_month] %><%= " is-today" if day[:today] %>">
-          <div class="cal-day-num"><%= day[:date].day %></div>
+          <details class="cal-day-add">
+            <summary class="cal-day-num"><%= day[:date].day %></summary>
+            <%= form_with model: Event.new, url: events_path(month: @month.strftime("%Y-%m")), class: "cal-day-add-form" do |f| %>
+              <%= f.text_field :title, placeholder: "Event title" %>
+              <%= f.datetime_field :start_at, value: day[:date].to_time.change(hour: 9).strftime("%Y-%m-%dT%H:%M") %>
+              <%= f.datetime_field :end_at, value: day[:date].to_time.change(hour: 10).strftime("%Y-%m-%dT%H:%M") %>
+              <%= f.submit "Add" %>
+            <% end %>
+          </details>
           <% day[:events].each do |event| %>
             <%= render "events/event_chip", event: event %>
           <% end %>

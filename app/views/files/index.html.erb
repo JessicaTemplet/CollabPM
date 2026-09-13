@@ -1,21 +1,86 @@
-<h1>Shared Files</h1>
+<h1><%= @folder ? @folder.name : "Shared Files" %></h1>
 
-<% if @files.any? %>
+<% if @folder %>
+  <p><%= link_to "‹ Up", files_path(folder_id: @folder.parent_id), class: "btn-quiet" %></p>
+<% end %>
+
+<% if @folders.any? || @files.any? %>
   <div class="tile-grid">
+    <% @folders.each do |folder| %>
+      <div class="card tile">
+        <%= link_to files_path(folder_id: folder.id), class: "tile-link" do %>
+          <span class="swatch"></span>
+          <span class="name"><%= folder.name %></span>
+        <% end %>
+        <div class="tile-actions">
+          <details class="rename-disclosure">
+            <summary class="btn-quiet">Rename</summary>
+            <%= form_with model: folder, url: file_folder_path(folder), method: :patch, class: "rename-form" do |f| %>
+              <%= f.text_field :name %>
+              <%= f.submit "Save" %>
+            <% end %>
+          </details>
+          <%= button_to "Delete", file_folder_path(folder), method: :delete,
+                class: "btn-quiet tile-remove",
+                form: { style: "display:inline", data: { turbo_confirm: "Delete this folder and everything inside it?" } } %>
+        </div>
+      </div>
+    <% end %>
+
     <% @files.each do |file| %>
       <div class="card tile">
-        <span class="swatch"></span>
-        <span class="name"><%= link_to file.filename.to_s, rails_blob_path(file, disposition: "attachment") %></span>
-        <%= button_to "Remove", file_path(file), method: :delete, class: "btn-quiet tile-remove", form: { style: "display:inline" } %>
+        <% if file.file.attached? && file.file.image? %>
+          <%= image_tag file.file.variant(resize_to_limit: [ 56, 56 ]), class: "file-thumb", alt: file.file.filename.to_s %>
+        <% else %>
+          <span class="swatch"></span>
+        <% end %>
+        <span class="name"><%= link_to file.file.filename.to_s, rails_blob_path(file.file, disposition: "attachment") %></span>
+        <div class="tile-actions">
+          <%= link_to "View", rails_blob_path(file.file, disposition: "inline"), target: "_blank", rel: "noopener", class: "btn-quiet" %>
+          <details class="rename-disclosure">
+            <summary class="btn-quiet">Rename</summary>
+            <%= form_with url: file_path(file), method: :patch, class: "rename-form" do |f| %>
+              <%= f.text_field :filename, value: file.file.filename.to_s %>
+              <%= f.submit "Save" %>
+            <% end %>
+          </details>
+          <%= button_to "Remove", file_path(file), method: :delete,
+                class: "btn-quiet tile-remove",
+                form: { style: "display:inline", data: { turbo_confirm: "Remove this file?" } } %>
+        </div>
       </div>
     <% end %>
   </div>
 <% else %>
-  <p class="empty-note">No files uploaded yet.</p>
+  <p class="empty-note">Nothing here yet.</p>
+<% end %>
+
+<h2>New folder</h2>
+<%= form_with model: FileFolder.new, url: file_folders_path do |f| %>
+  <%= f.hidden_field :parent_id, value: @folder&.id %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+  <%= f.submit "Create folder" %>
 <% end %>
 
 <h2>Upload</h2>
-<%= form_with url: files_path, method: :post, multipart: true do |f| %>
-  <%= f.file_field :file %>
-  <%= f.submit "Upload" %>
+<%= form_with url: files_path(folder_id: @folder&.id), method: :post, multipart: true, data: { controller: "uploads" } do |f| %>
+  <div class="upload-dropzone" data-uploads-target="dropzone"
+       data-action="dragover->uploads#dragOver dragleave->uploads#dragLeave drop->uploads#drop">
+    <p class="upload-dropzone-label">Drag files or a folder here<%= " (into #{@folder.name})" if @folder %></p>
+    <div class="upload-actions">
+      <button type="button" class="btn-quiet" data-action="uploads#pickFiles">Choose files</button>
+      <button type="button" class="btn-quiet" data-action="uploads#pickFolder">Choose folder</button>
+    </div>
+  </div>
+
+  <%= f.file_field :file, multiple: true, style: "display:none",
+        data: { uploads_target: "fileInput", action: "change->uploads#filesPicked" } %>
+  <input type="file" webkitdirectory multiple style="display:none"
+         data-uploads-target="folderInput" data-action="change->uploads#filesPicked">
+  <%= hidden_field_tag :relative_paths_json, "[]", data: { uploads_target: "relativePaths" } %>
+
+  <ul class="upload-pending" data-uploads-target="pendingList"></ul>
+
+  <%= f.submit "Upload", data: { uploads_target: "submit" }, disabled: true %>
 <% end %>

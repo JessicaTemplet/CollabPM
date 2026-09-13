@@ -31,9 +31,35 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def update
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant — see show above.
+    @document = Current.tenant.documents.find(params[:id])
+
+    if @document.update(rename_params)
+      redirect_to @document, notice: "Document renamed."
+    else
+      redirect_to @document, alert: @document.errors.full_messages.to_sentence
+    end
+  end
+
+  def destroy
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant — see show above.
+    @document = Current.tenant.documents.find(params[:id])
+    folder_id = @document.folder_id
+    @document.destroy
+
+    redirect_to documents_path(folder_id: folder_id), notice: "Document deleted."
+  end
+
   private
 
   def document_params
     params.require(:document).permit(:title, :folder_id)
+  end
+
+  def rename_params
+    params.require(:document).permit(:title)
   end
 end

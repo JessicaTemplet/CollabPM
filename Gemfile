@@ -23,6 +23,17 @@ gem "bootsnap", require: false
 gem "fiddle" # silences a Ruby 4.0 default-gems warning triggered by reline/irb
 gem "tzinfo-data", platforms: %i[windows jruby]
 
+# ActiveStorage variants (thumbnails for Shared Files) — vips backend since
+# the Dockerfile already installs libvips for production; Rails 8's
+# `load_defaults 8.1` already sets active_storage.variant_processor = :vips.
+# require: false on ruby-vips — Rails/image_processing require it lazily
+# only when a variant is actually generated, not at boot. Eagerly
+# requiring it here would mean the whole app fails to boot on any
+# machine where libvips isn't discoverable yet, in every environment,
+# for a feature (thumbnails) most requests never touch.
+gem "image_processing", "~> 1.2"
+gem "ruby-vips", "~> 2.2", require: false
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
   gem "rspec-rails"

@@ -15,10 +15,11 @@ class Tenant < ApplicationRecord
   has_many :outreach_contacts, dependent: :destroy
   has_many :reminders, dependent: :destroy
 
-  # A shared drop-folder for the tenant, not tied to any other record.
-  # Uses the disk service (see config/storage.yml) so files land in a real
-  # folder on the server rather than a third-party bucket.
-  has_many_attached :shared_files
+  # A shared drop-folder for the tenant. Each upload is its own SharedFile
+  # row (see app/models/shared_file.rb) so it can live inside a real
+  # FileFolder tree, browsable the way a normal file manager works.
+  has_many :file_folders, dependent: :destroy
+  has_many :shared_files, dependent: :destroy
 
   before_validation { subdomain&.downcase!&.strip! }
 

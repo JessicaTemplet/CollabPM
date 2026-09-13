@@ -20,9 +20,15 @@ class LedgerEntriesController < ApplicationController
     end
   end
 
+  def show
+    # nosemgrep: ruby.rails.security.brakeman.check-unscoped-find.check-unscoped-find
+    # Scoped to Current.tenant, the app's tenant-isolation boundary.
+    @entry = Current.tenant.ledger_entries.find(params[:id])
+  end
+
   private
 
   def entry_params
-    params.require(:ledger_entry).permit(:method, :entry_type, :amount_cents, :description, :subject_type, :subject_id)
+    params.require(:ledger_entry).permit(:method, :entry_type, :amount_cents, :description)
   end
 end

@@ -10,13 +10,13 @@ RSpec.describe LedgerEntry do
     Current.tenant = nil
   end
 
-  it "requires a subject for a value entry" do
-    entry = build(:ledger_entry, tenant: tenant, created_by: creator, entry_type: "value", subject: nil)
+  it "requires a description for a value entry" do
+    entry = build(:ledger_entry, tenant: tenant, created_by: creator, entry_type: "value", description: nil)
     expect(entry).not_to be_valid
   end
 
-  it "allows a nil subject for a payment entry" do
-    entry = build(:ledger_entry, tenant: tenant, created_by: creator, entry_type: "payment", subject: nil)
+  it "allows a nil description for a payment entry" do
+    entry = build(:ledger_entry, tenant: tenant, created_by: creator, entry_type: "payment", description: nil)
     expect(entry).to be_valid
   end
 

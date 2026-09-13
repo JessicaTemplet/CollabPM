@@ -61,8 +61,20 @@ export default class extends Controller {
   // it again would duplicate the character or fight the user's live
   // cursor). Otherwise it's a remote edit and needs to be spliced in.
   applyIfNotOwnEcho(data, applyFn) {
-    if (data.client_op_id && this.pendingOps.has(data.client_op_id)) {
-      this.pendingOps.delete(data.client_op_id)
+    const id = data.client_op_id
+    if (id && this.pendingOps.has(id)) {
+      // A paste sends ONE intent but the server confirms it as N
+      // single-character broadcasts (see DocumentChannel#apply_insert!),
+      // all carrying this same client_op_id. Only the count-th
+      // confirmation actually clears the echo — anything earlier used to
+      // fall through to applyFn() and re-insert characters the browser
+      // already showed natively, corrupting the paste.
+      const remaining = this.pendingOps.get(id) - 1
+      if (remaining > 0) {
+        this.pendingOps.set(id, remaining)
+      } else {
+        this.pendingOps.delete(id)
+      }
       return
     }
     applyFn()
@@ -114,7 +126,11 @@ export default class extends Controller {
 
   sendIntent(intent) {
     const client_op_id = String(this.nextOpId++)
-    this.pendingOps.set(client_op_id, true)
+    // A single "insert" intent can carry a multi-character value (paste),
+    // and the server splits that into one op per character, so it takes
+    // that many confirmations — not one — before this echo is fully seen.
+    const expectedOps = intent.type === "insert" ? Math.max(intent.value.length, 1) : 1
+    this.pendingOps.set(client_op_id, expectedOps)
     this.subscription.send({ ...intent, client_op_id })
 
     // Best-effort recovery, not a full reconciliation protocol: if the
