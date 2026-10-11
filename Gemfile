@@ -31,7 +31,7 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 # requiring it here would mean the whole app fails to boot on any
 # machine where libvips isn't discoverable yet, in every environment,
 # for a feature (thumbnails) most requests never touch.
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.2"
 gem "ruby-vips", "~> 2.2", require: false
 
 group :development, :test do
