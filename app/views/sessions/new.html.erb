@@ -5,12 +5,13 @@
 
     <%= form_with url: session_path do |f| %>
       <%= f.label :email_address %>
-      <%= f.email_field :email_address, autofocus: true %>
+      <%= f.email_field :email_address, value: SessionsController::GUEST_EMAIL %>
 
       <%= f.label :password %>
-      <%= f.password_field :password %>
+      <%= f.text_field :password, value: SessionsController::GUEST_PASSWORD, autocomplete: "off" %>
 
-      <%= f.submit "Sign in" %>
+      <%= f.submit "Try the demo →", class: "demo-submit", autofocus: true %>
+      <p class="demo-hint">Guest login is already filled in. Just click or press Enter.</p>
     <% end %>
 
     <div class="auth-links">
